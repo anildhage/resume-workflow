@@ -7,6 +7,9 @@ This file exists to reduce drift and make resume generation more deterministic f
 ### Fixed resume structure
 - `resumeSkeleton.md` — source of all permanent content and headings
 
+### Stable profile facts
+- `profileFacts.md` — cross-role professional identity, recurring capabilities, and constant resume rules
+
 ### Generation rules
 - `targetResume.md` — the exact instruction contract for generating a target-role resume
 
@@ -48,7 +51,7 @@ This file exists to reduce drift and make resume generation more deterministic f
 4. Select relevant skills from `skills/skills.md` only.
 5. Build SG bullets from project and first-person evidence only.
 6. Never invent unsupported claims.
-7. Keep the experience statement as `7+ years`.
+7. Calculate the experience statement from dated professional roles in `resumeSkeleton.md`.
 8. Preserve all fixed skeleton content without rewriting it.
 9. Replace all placeholders before final output.
 10. Save as a new file in `files/` using the exact naming convention.
@@ -73,6 +76,7 @@ The generation process is successful only if all of the following are true:
 - using unsupported technologies or unverified metrics
 - generating project or role content from memory instead of source files
 - allowing placeholder text to remain in the output
+- copying a stale experience number from an older generated resume
 - creating output files without checking the existing count in `files/`
 
 ## Suggested agent behavior

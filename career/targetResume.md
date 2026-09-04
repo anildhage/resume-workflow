@@ -18,6 +18,8 @@ The resume-generation process receives a target role, for example:
 
 The target role determines which career summary, skills, work-experience bullets, and projects are selected. The process must not invent employers, dates, technologies, responsibilities, achievements, metrics, or qualifications that are not supported by the source files.
 
+Before generating a resume, also read `notes/career/profileFacts.md` for stable cross-role positioning. Treat `notes/career/resumeSkeleton.md` as the sole authority for fixed personal facts and dated work history.
+
 ## Resume skeleton
 
 Always begin with the file:
@@ -48,7 +50,11 @@ For the `CAREER SUMMARY` placeholder, read the files in:
 
 `notes/career/careerSummary/`
 
-Select the summary that most closely matches the target role. Use the role-specific summary as the basis for the career summary in the generated resume. Keep the summary concise and in the same professional resume style as the source summary files.
+Do not copy a single summary file verbatim into the resume. Instead, treat the summary folder as a knowledge base and synthesize a role-specific summary based on the target role, the overall pattern across the available summary files, and the actual evidence in the project and first-person source material.
+
+Use the existing summary files as reference material to understand the common themes, strengths, and phrasing patterns for the target role. Then generate a concise, role-tailored summary for the resume that is grounded in your actual experience and aligned to the job being targeted.
+
+If a summary file for the exact target role already exists, use it as context and guidance, not as a direct copy. If no suitable summary exists for the target role, create a new summary file in `notes/career/careerSummary/` using the same professional style and then use that new summary as the basis for the generated resume.
 
 Available summaries currently include:
 
@@ -58,7 +64,7 @@ Available summaries currently include:
 - `dataAndAIEngineer.md`
 - `financeProductionSupportAnalyst.md`
 
-Every generated resume must use the consistent experience statement from the selected summary: `7+ years of experience`. Do not change this number between resumes.
+Calculate the experience statement from the dated professional roles in `notes/career/resumeSkeleton.md` using the current date. Use the resulting floor in the format `{calculated years}+ years of experience`. Do not copy an old experience number from another generated resume or summary file. The validator is authoritative if a generated resume and a summary file disagree.
 
 ### Skills
 
@@ -157,6 +163,6 @@ Before saving a generated resume, confirm that:
 5. The skills came from `notes/career/skills/skills.md`.
 6. Société Générale bullets were grounded in `projects/`, `skills/`, and `firstPersonVoice/`.
 7. Projects came from `notes/career/projects/`.
-8. The experience claim remains `7+ years`.
+8. The experience claim matches the value calculated from the dated professional roles in `resumeSkeleton.md`.
 9. The output is Markdown and uses the required filename pattern.
 10. The output is a new file in `notes/career/files/` and does not overwrite another file.

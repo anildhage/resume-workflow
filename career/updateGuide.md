@@ -21,12 +21,27 @@ Update the dynamic evidence files as your professional experience grows.
 
 When you add new work experience, use this order:
 
-1. Add or update the role summary in `career/careerSummary/` if the new experience changes your target role narrative.
-2. Update `career/skills/skills.md` when new tools, platforms, or capabilities become relevant.
-3. Add a new project note in `career/projects/` for a substantial project, initiative, or workstream.
-4. Add or expand a supporting narrative note in `career/firstPersonVoice/` when you want to preserve interview-ready context.
-5. Keep the resume skeleton unchanged unless the fixed factual details changed.
-6. Validate generated resumes using the scripts in `scripts/`.
+1. Review the existing summaries in `career/careerSummary/` and synthesize the role narrative instead of copying one file verbatim.
+2. Add or update the role summary in `career/careerSummary/` if the new experience changes your target role narrative or if the target role does not yet have a summary.
+3. Update `career/profileFacts.md` when your recurring professional identity, core strengths, or cross-role capabilities change.
+4. Update `career/skills/skills.md` when new tools, platforms, or capabilities become relevant.
+5. Add a new project note in `career/projects/` for a substantial project, initiative, or workstream.
+6. Add or expand a supporting narrative note in `career/firstPersonVoice/` when you want to preserve interview-ready context.
+7. Keep the resume skeleton unchanged unless the fixed factual details changed. Its dated roles determine the experience claim.
+8. Update `career/updateLog.md`.
+9. Validate generated resumes using the scripts in `scripts/`.
+
+## Summary synthesis rule
+
+Do not copy a single summary file directly into a generated resume.
+
+Instead:
+
+- read all available summary files in `career/careerSummary/`
+- identify the strongest themes relevant to the target role
+- create a tailored, synthesized summary grounded in actual experience
+- add a new summary file when the target role is new or not yet represented well enough
+- use the summary as a generated artifact, not as a pasted duplicate
 
 ## What to update when
 
@@ -52,7 +67,7 @@ When you add new work experience, use this order:
 ### If you want a new resume angle
 
 - Update the summary in the relevant file under `career/careerSummary/`.
-- Keep the `7+ years of experience` statement consistent unless the underlying experience claim changes.
+- Do not manually preserve an old experience statement. Calculate it from the dated professional roles in `career/resumeSkeleton.md`.
 - Use only evidence already present in the repo to support the role positioning.
 
 ## Additions to keep the repo maintainable

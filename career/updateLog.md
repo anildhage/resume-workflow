@@ -18,6 +18,9 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-04 | Documentation and summaries | Documented the profile-maintenance workflow in README, aligned update guides and checklist, and refreshed role summaries to the skeleton-derived 8+ years claim. | 2026-09-04 |
+| 2026-09-04 | Profile consistency | Added stable profile facts, skeleton-based experience calculation, validator enforcement, and refreshed generated experience claims to 8+ years. | 2026-09-04 |
+| 2026-09-04 | Generated resume | Added SQL-focused Sales Database Associate Analyst resume emphasizing SQL Server integration, data cleansing, auditing, and reporting controls. | 2026-09-04 |
 | 2026-09-03 | Repo setup | Added deterministic resume-generation workflow, validation scripts, README guidance, source index, source template, and maintainer update workflow. | 2026-09-03 |
 
 ## Recommended usage

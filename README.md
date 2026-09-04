@@ -11,6 +11,7 @@ The agent should read the target role, select the most relevant source files, an
 The repo separates fixed facts from dynamic content:
 
 - Fixed structure and constant experience details live in `career/resumeSkeleton.md`
+- Stable cross-role professional identity and recurring capabilities live in `career/profileFacts.md`
 - Role-specific summaries live in `career/careerSummary/`
 - Skills live in `career/skills/skills.md`
 - Project evidence lives in `career/projects/`
@@ -22,23 +23,38 @@ The repo separates fixed facts from dynamic content:
 When generating a resume, the model must follow this priority order:
 
 1. `career/resumeSkeleton.md` — authoritative fixed content and resume layout
-2. `career/targetResume.md` — generation rules and constraints
-3. `career/careerSummary/*.md` — role-specific experience summary
-4. `career/skills/skills.md` — skills selection
-5. `career/projects/*.md` — project evidence and achievements
-6. `career/firstPersonVoice/*.md` — detailed narrative and operational context
-7. `career/files/` — output destination only; never as an input source
+2. `career/profileFacts.md` — stable professional identity and recurring capabilities
+3. `career/targetResume.md` — generation rules and constraints
+4. `career/careerSummary/*.md` — summary knowledge base; read broadly and synthesize a tailored summary for the target role
+5. `career/skills/skills.md` — skills selection
+6. `career/projects/*.md` — project evidence and achievements
+7. `career/firstPersonVoice/*.md` — detailed narrative and operational context
+8. `career/files/` — output destination only; never as an input source
+
+## Summary generation rule
+
+The model must not directly copy a single summary file into the final resume.
+
+Instead, it must:
+
+- read the full set of role summaries in `career/careerSummary/`
+- identify the common strengths and themes relevant to the target role
+- synthesize a new summary tailored to the job being targeted
+- use an existing summary only as context, not as a verbatim block of text
+- create a new summary file in `career/careerSummary/` when the target role has no suitable existing summary
 
 ## Required workflow
 
 1. Read `career/targetResume.md` and identify the target role.
 2. Read `career/resumeSkeleton.md` and preserve all constant sections exactly.
-3. Choose the matching summary from `career/careerSummary/`.
-4. Select relevant skills from `career/skills/skills.md`.
-5. Build the Societe Generale position bullets by synthesizing project files, first-person source files, and skills.
-6. Select the most relevant project(s) from `career/projects/`.
-7. Generate a new Markdown resume in `career/files/` using the required filename pattern.
-8. Run final validation before saving.
+3. Read `career/profileFacts.md` for stable cross-role facts and recurring capabilities.
+4. Calculate the experience statement from the dated professional roles in `career/resumeSkeleton.md`.
+5. Choose the matching summary from `career/careerSummary/`.
+6. Select relevant skills from `career/skills/skills.md`.
+7. Build the Societe Generale position bullets by synthesizing project files, first-person source files, and skills.
+8. Select the most relevant project(s) from `career/projects/`.
+9. Generate a new Markdown resume in `career/files/` using the required filename pattern.
+10. Run `python3 scripts/validate_resume.py` before saving or delivering the resume.
 
 ## Non-negotiable rules
 
@@ -80,7 +96,7 @@ Before writing the file, the model must confirm:
 5. The skills came from `career/skills/skills.md`.
 6. SG bullets were grounded in `career/projects/` and `career/firstPersonVoice/`.
 7. Projects came from `career/projects/`.
-8. The experience statement remains `7+ years`.
+8. The experience statement matches the value calculated from `career/resumeSkeleton.md` using the current date.
 9. Output is Markdown.
 10. File is new and does not overwrite an existing resume.
 
@@ -111,6 +127,7 @@ Update the repo whenever you:
 ### Where to update each type of information
 
 - `career/resumeSkeleton.md` — only change when the fixed professional facts truly change
+- `career/profileFacts.md` — update when your recurring professional identity, core strengths, or cross-role capabilities change; do not duplicate every project here
 - `career/targetResume.md` — only change if the generation rules or file contract change
 - `career/careerSummary/` — update the relevant role summary when your experience or positioning changes
 - `career/skills/skills.md` — add or refine skills as they become part of your professional toolkit
@@ -120,12 +137,26 @@ Update the repo whenever you:
 
 ### Recommended update workflow
 
-1. Add a new project or workstream in `career/projects/` if the work is substantial.
-2. Add supporting narrative context in `career/firstPersonVoice/` if the work needs interview-ready detail.
-3. Update the relevant role summary in `career/careerSummary/` if the experience changes your target positioning.
-4. Update `career/skills/skills.md` with any new tools or competencies that are now part of your work.
-5. Keep the fixed skeleton stable unless the underlying factual details truly changed.
-6. Generate and validate the output using the scripts in `scripts/` before saving a final resume.
+1. Update `career/resumeSkeleton.md` when an employer, title, location, date, education, or certification changes. This is the authority for fixed facts and experience calculation.
+2. Update `career/profileFacts.md` when your broad professional identity or recurring strengths change. Keep it concise and cross-role; do not put job-specific bullets here.
+3. Add a new project or workstream in `career/projects/` if the work is substantial.
+4. Add supporting narrative context in `career/firstPersonVoice/` if the work needs interview-ready detail.
+5. Update `career/skills/skills.md` with new tools or competencies only after you have actually used them.
+6. Update relevant files in `career/careerSummary/` when your target positioning changes. Do not hard-code an old experience number; use the skeleton-derived value.
+7. Add the change to `career/updateLog.md`.
+8. Generate and validate the output using the scripts in `scripts/` before saving a final resume.
+
+### What to update over time
+
+| Change | Update first | Also review |
+|---|---|---|
+| New employer, title, location, or employment dates | `resumeSkeleton.md` | `profileFacts.md`, summaries, experience claim, update log |
+| New project or major workstream | `projects/` | `firstPersonVoice/`, skills, relevant summaries, update log |
+| New tool or technical capability | `skills/skills.md` | project evidence, `profileFacts.md`, relevant summaries, update log |
+| Broader professional strength or career direction | `profileFacts.md` | relevant summaries, skills, update log |
+| New target job application | target-specific summary or new summary file | skills, projects, generated resume, validation |
+
+The generated resume files under `career/files/` are outputs, not source material. Normally, do not edit them as the primary fix. Update the source files first, then generate a new resume.
 
 ### Maintainer habits
 
@@ -166,6 +197,7 @@ The checklist covers:
 ## Directory snapshot
 
 - `career/resumeSkeleton.md` — fixed resume skeleton
+- `career/profileFacts.md` — stable cross-role profile facts
 - `career/targetResume.md` — generation rules
 - `career/careerSummary/` — role-specific summary options
 - `career/skills/skills.md` — reusable skill taxonomy
