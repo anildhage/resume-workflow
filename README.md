@@ -43,7 +43,7 @@ Instead, it must:
 - use an existing summary only as context, not as a verbatim block of text
 - create a new summary file in `career/careerSummary/` when the target role has no suitable existing summary
 
-## Required workflow
+### Required workflow
 
 1. Read `career/targetResume.md` and identify the target role.
 2. Read `career/resumeSkeleton.md` and preserve all constant sections exactly.
@@ -53,22 +53,26 @@ Instead, it must:
 6. Select relevant skills from `career/skills/skills.md`.
 7. Build the Societe Generale position bullets by synthesizing project files, first-person source files, and skills.
 8. Select the most relevant project(s) from `career/projects/`.
-9. Generate a new Markdown resume in `career/files/` using the required filename pattern.
-10. Run `python3 scripts/validate_resume.py` before saving or delivering the resume.
+9. Assemble an unformatted content draft and review it for factual accuracy, completeness, role alignment, and placeholder removal.
+10. Apply final Markdown headings, spacing, bolding, and other presentation rules only after the content gate passes.
+11. Save a new Markdown resume in `career/files/` using the required filename pattern.
+12. Run `python3 scripts/validate_resume.py` before delivering the resume.
 
 ### Resume formatting
 
 Generated resumes must use the standard Markdown header and skills layout:
 
 ```markdown
-Anil Dhage  
+# Anil Dhage
 Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage
 ---
-SKILLS
+## SKILLS
 SQL Server  |  Advanced querying  |  Data analysis
 ```
 
-Keep the contact details on one line separated by `  |  `, and keep selected skills on one pipe-separated line without bullet markers.
+Keep the contact details on one line separated by `  |  `, keep selected skills on one pipe-separated line without bullet markers, and put each section heading on its own line above its content.
+
+Formatting is a final presentation step. It must not change the factual content selected during the content-quality stage.
 
 ## Non-negotiable rules
 
@@ -113,6 +117,8 @@ Before writing the file, the model must confirm:
 8. The experience statement matches the value calculated from `career/resumeSkeleton.md` using the current date.
 9. Output is Markdown.
 10. File is new and does not overwrite an existing resume.
+11. Content quality was checked before cosmetic formatting was applied.
+12. Final formatting did not introduce placeholders or alter fixed facts.
 
 ## Determinism guidance
 

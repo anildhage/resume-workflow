@@ -19,6 +19,14 @@ from calculate_experience import experience_years
 DEFAULT_PATTERN = re.compile(r"^[A-Za-z]+-AnilDhage-\d+\.md$")
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 EXPERIENCE_RE = re.compile(r"\b(\d+)\+ years of experience\b")
+SECTION_NAMES = (
+    "CAREER SUMMARY",
+    "SKILLS",
+    "WORK EXPERIENCE",
+    "EDUCATION",
+    "CERTIFICATIONS",
+    "PROJECTS",
+)
 
 
 def collect_resume_files(directory: Path) -> list[Path]:
@@ -45,6 +53,13 @@ def validate_file(file_path: Path, expected_experience_years: int) -> list[str]:
         errors.append(
             f"Placeholder text found in '{file_name}'. Remove all '- to be updated' entries before saving."
         )
+
+    lines = content.splitlines()
+    if not lines or lines[0].strip() != "# Anil Dhage":
+        errors.append(f"'{file_name}' must start with '# Anil Dhage'.")
+    for section_name in SECTION_NAMES:
+        if f"## {section_name}" not in lines:
+            errors.append(f"'{file_name}' is missing the '## {section_name}' heading.")
 
     experience_claims = [int(value) for value in EXPERIENCE_RE.findall(content)]
     if not experience_claims:

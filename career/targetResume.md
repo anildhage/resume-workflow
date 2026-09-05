@@ -6,6 +6,31 @@ This file is the instruction contract for generating role-targeted resumes. When
 
 The generated resume must remain accurate to my experience, relevant to the target role, concise, professional, and compatible with the structure of the skeleton.
 
+## Generation sequence
+
+Follow this order for every resume:
+
+1. Build the content draft from the target role, the fixed skeleton, and verified career evidence.
+2. Perform a content-quality review before applying Markdown formatting or keyword emphasis.
+3. Apply the final resume structure, heading levels, bolding, spacing, and other presentation rules.
+4. Run the final structural and placeholder validation after formatting.
+
+Formatting is the last presentation stage. It must never be used to hide missing content, unsupported claims, weak evidence, or unresolved placeholders.
+
+### Content-quality gate
+
+Before any cosmetic formatting, confirm that the content draft:
+
+- preserves every fixed employer, title, location, date, education, and certification fact from `resumeSkeleton.md`
+- contains a synthesized, role-specific summary rather than a copied summary file
+- uses only skills and claims supported by the source files
+- contains evidence-grounded Société Générale responsibilities and relevant projects
+- uses the skeleton-derived experience claim
+- replaces every dynamic placeholder
+- has complete `CAREER SUMMARY`, `SKILLS`, `WORK EXPERIENCE`, `EDUCATION`, `CERTIFICATIONS`, and `PROJECTS` content
+
+Only after all checks pass may the draft receive heading levels, bolding, spacing, or other cosmetic treatment.
+
 ## Inputs
 
 The resume-generation process receives a target role, for example:
@@ -78,12 +103,24 @@ Use only skills supported by `skills.md` and the other career source files. Keep
 
 ### Resume formatting
 
-Preserve the standard Markdown resume header:
+Use a natural Markdown resume hierarchy:
 
-- Keep `Anil Dhage` on the first line.
+- Put `# Anil Dhage` on the first line by itself.
 - Put the location, phone, email, and LinkedIn URL on one second line separated by `  |  `.
 - Put `---` immediately below the contact line.
+- Render `CAREER SUMMARY`, `SKILLS`, `WORK EXPERIENCE`, `EDUCATION`, `CERTIFICATIONS`, and `PROJECTS` as level-two Markdown headings, each on its own line.
+- Put all section content below its heading; never place body text on the same line as a section heading.
 - Render the selected `SKILLS` entries on one line, separated by `  |  `, without bullet markers.
+
+Use restrained Markdown bolding to improve recruiter scanability:
+
+- Do not bold section headings or the candidate name because their heading levels provide the visual hierarchy.
+- Bold employer names, job titles, and project names.
+- Review the target job description and identify a small set of high-value matching skills, responsibilities, tools, and domain terms.
+- Bold those matching terms only where the resume statement is directly supported by the source files and the term appears naturally in the summary, skills, experience, or project content.
+- Prefer approximately 10-15 strategically distributed keyword highlights across the resume; do not bold every occurrence or entire bullet sentences.
+- Do not bold unsupported qualifications, inferred experience, or requirements that are only present in the job description.
+- Keep the resume readable for human reviewers; bolding is for emphasis and scanning, not keyword stuffing.
 
 ### Société Générale work experience
 

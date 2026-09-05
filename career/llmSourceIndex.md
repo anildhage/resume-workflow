@@ -54,7 +54,9 @@ This file exists to reduce drift and make resume generation more deterministic f
 7. Calculate the experience statement from dated professional roles in `resumeSkeleton.md`.
 8. Preserve all fixed skeleton content without rewriting it.
 9. Replace all placeholders before final output.
-10. Save as a new file in `files/` using the exact naming convention.
+10. Assemble and quality-check an unformatted content draft before presentation formatting.
+11. Apply Markdown headings, bolding, and spacing only after the content gate passes.
+12. Save as a new file in `files/` using the exact naming convention.
 
 ## Validation checklist
 
@@ -78,6 +80,7 @@ The generation process is successful only if all of the following are true:
 - allowing placeholder text to remain in the output
 - copying a stale experience number from an older generated resume
 - creating output files without checking the existing count in `files/`
+- applying cosmetic formatting before content quality has been checked
 
 ## Suggested agent behavior
 
@@ -86,7 +89,9 @@ When a local model processes this repo, it should operate in a strict evidence-f
 - read source
 - select relevant facts
 - synthesize concise resume content
-- validate against the skeleton and rules
+- validate the unformatted content against the skeleton and rules
+- apply final presentation formatting
+- validate the formatted output
 - write output
 - stop once validation passes
 

@@ -34,6 +34,8 @@ Use this quick checklist whenever you refresh the repo with new experience, skil
 - Add a new row to `career/updateLog.md` with the date, area, summary, and last refresh timestamp.
 
 ### 8. Validate the repo
+- Review resume content for factual accuracy, role alignment, completeness, and evidence support before reviewing formatting.
+- Apply cosmetic formatting only after the content review passes.
 - Run the validation script in `scripts/validate_resume.py`.
 - If generating a new resume, use `scripts/generate_resume_filename.py` and `scripts/write_resume.py`.
 

@@ -11,34 +11,62 @@ from pathlib import Path
 from generate_resume_filename import normalize_role_name, next_resume_index
 
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
-SECTION_HEADING_RE = re.compile(r"^[A-Z][A-Z &/]+$")
+SECTION_NAMES = (
+    "CAREER SUMMARY",
+    "SKILLS",
+    "WORK EXPERIENCE",
+    "EDUCATION",
+    "CERTIFICATIONS",
+    "PROJECTS",
+)
+SECTION_HEADING_RE = re.compile(r"^\s*(?:#{1,6}\s*)?(?:\*\*)?([A-Z][A-Z &/]*)\s*(?:\*\*)?\s*$")
+
+
+def section_name(line: str) -> str | None:
+    match = SECTION_HEADING_RE.fullmatch(line.strip())
+    if not match:
+        return None
+    name = match.group(1).strip()
+    return name if name in SECTION_NAMES else None
 
 
 def normalize_resume_format(content: str) -> str:
-    """Apply the canonical header and skills layout before saving a resume."""
+    """Apply presentation formatting after the content-quality gate passes."""
     lines = content.strip().splitlines()
     if not lines:
         return content
 
-    name_index = next((index for index, line in enumerate(lines) if line.strip() == "Anil Dhage"), None)
+    name_index = next(
+        (
+            index
+            for index, line in enumerate(lines)
+            if re.sub(r"[#*\s]", "", line) == "AnilDhage"
+        ),
+        None,
+    )
     if name_index is not None:
         header_end = next(
-            (index for index in range(name_index + 1, len(lines)) if lines[index].strip() == "CAREER SUMMARY"),
+            (index for index in range(name_index + 1, len(lines)) if section_name(lines[index]) == "CAREER SUMMARY"),
             name_index + 1,
         )
         lines = lines[:name_index] + [
-            "Anil Dhage  ",
+            "# Anil Dhage  ",
             "Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage",
             "---",
         ] + lines[header_end:]
 
-    skills_index = next((index for index, line in enumerate(lines) if line.strip() == "SKILLS"), None)
+    lines = [
+        f"## {section_name(line)}" if section_name(line) else line
+        for line in lines
+    ]
+
+    skills_index = next((index for index, line in enumerate(lines) if line.strip() == "## SKILLS"), None)
     if skills_index is not None:
         skills_end = next(
             (
                 index
                 for index in range(skills_index + 1, len(lines))
-                if SECTION_HEADING_RE.fullmatch(lines[index].strip())
+                if section_name(lines[index])
             ),
             len(lines),
         )
@@ -54,11 +82,30 @@ def normalize_resume_format(content: str) -> str:
 
 
 def validate_content(content: str) -> list[str]:
+    """Validate the unformatted content draft before presentation changes."""
     errors: list[str] = []
     if not content.strip():
         errors.append("Resume content cannot be empty.")
     if PLACEHOLDER_RE.search(content):
         errors.append("Resume content contains the placeholder '- to be updated'. Remove it before saving.")
+    missing_sections = [
+        name for name in SECTION_NAMES
+        if not any(section_name(line) == name for line in content.splitlines())
+    ]
+    if missing_sections:
+        errors.append(f"Resume content is missing required sections: {', '.join(missing_sections)}.")
+    return errors
+
+
+def validate_presentation(content: str) -> list[str]:
+    """Validate the final presentation after cosmetic formatting."""
+    lines = content.splitlines()
+    errors: list[str] = []
+    if not lines or lines[0].strip() != "# Anil Dhage":
+        errors.append("Formatted resume must start with '# Anil Dhage'.")
+    for name in SECTION_NAMES:
+        if f"## {name}" not in lines:
+            errors.append(f"Formatted resume is missing the '## {name}' heading.")
     return errors
 
 
@@ -80,15 +127,20 @@ def main() -> int:
         print(f"Error: {exc}")
         return 1
 
-    content = args.content
-    if content is None:
-        content = sys.stdin.read()
-    content = normalize_resume_format(content)
+    content = args.content if args.content is not None else sys.stdin.read()
 
-    errors = validate_content(content)
-    if errors:
-        print("Pre-save validation failed:")
-        for error in errors:
+    content_errors = validate_content(content)
+    if content_errors:
+        print("Content-quality validation failed before formatting:")
+        for error in content_errors:
+            print(f"- {error}")
+        return 1
+
+    formatted_content = normalize_resume_format(content)
+    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content)
+    if presentation_errors:
+        print("Final presentation validation failed:")
+        for error in presentation_errors:
             print(f"- {error}")
         return 1
 
@@ -102,7 +154,7 @@ def main() -> int:
         print(f"Error: '{target.name}' already exists. Choose a new role or clean the directory.")
         return 1
 
-    target.write_text(content, encoding="utf-8")
+    target.write_text(formatted_content, encoding="utf-8")
     print(f"Saved: {target}")
     return 0
 
