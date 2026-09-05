@@ -76,6 +76,10 @@ Formatting is a final presentation step. It must not change the factual content 
 
 After the content gate passes, bold important target-role keywords in the summary and skills sections. Then bold the supporting action, responsibility, or outcome in work-experience and project bullets that demonstrates how those keywords were used. Final validation requires strategic bolding in both the keyword sections and supporting evidence sections.
 
+### Cosmetic mode switch
+
+Set `evidence_bolding: true` or `false` in `career/resumeFormatting.yml`. `true` enables keyword and supporting-evidence bolding; `false` produces a clean resume with only Markdown headings. Override the setting for one run with `python3 scripts/write_resume.py --role "Business Analyst" --bolding yes` or `--bolding no`.
+
 ## Non-negotiable rules
 
 The model must not:

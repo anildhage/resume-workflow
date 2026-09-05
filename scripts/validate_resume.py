@@ -75,21 +75,21 @@ def validate_file(file_path: Path, expected_experience_years: int) -> list[str]:
         )
 
     bold_spans = BOLD_RE.findall(content)
-    if len(bold_spans) < 10 or len(bold_spans) > 45:
+    if bold_spans and (len(bold_spans) < 10 or len(bold_spans) > 45):
         errors.append(
             f"'{file_name}' contains {len(bold_spans)} bold spans. "
-            "Final formatting must contain between 10 and 45 strategic bold spans."
+            "Evidence-bold formatting must contain between 10 and 45 strategic bold spans, or contain none for headings-only formatting."
         )
 
     work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
     education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
     projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
-    if work_start is not None and not any(
+    if bold_spans and work_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[work_start + 1 : education_start]
     ):
         errors.append(f"'{file_name}' must bold at least one supporting action in work experience bullets.")
-    if projects_start is not None and not any(
+    if bold_spans and projects_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[projects_start + 1 :]
     ):

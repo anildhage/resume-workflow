@@ -18,6 +18,8 @@ Follow this order for every resume:
 
 Formatting is the last presentation stage. It must never be used to hide missing content, unsupported claims, weak evidence, or unresolved placeholders.
 
+The cosmetic mode is controlled by `career/resumeFormatting.yml`. When `evidence_bolding` is `true`, apply keyword and supporting-evidence bolding. When it is `false`, remove inline bolding and keep only Markdown heading hierarchy. A one-run override is available with `scripts/write_resume.py --bolding yes` or `--bolding no`.
+
 ### Content-quality gate
 
 Before any cosmetic formatting, confirm that the content draft:

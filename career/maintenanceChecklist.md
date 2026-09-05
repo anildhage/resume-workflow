@@ -37,6 +37,7 @@ Use this quick checklist whenever you refresh the repo with new experience, skil
 - Review resume content for factual accuracy, role alignment, completeness, and evidence support before reviewing formatting.
 - Apply cosmetic formatting only after the content review passes: bold target keywords in the summary and skills, then bold the supporting actions or outcomes in work-experience and project bullets.
 - Confirm the final resume has strategic bolding in both keyword sections and supporting evidence sections; do not bold entire bullets or unsupported claims.
+- Check `career/resumeFormatting.yml` before generation: use `evidence_bolding: true` for keyword/evidence emphasis or `false` for headings-only output. Use the writer’s `--bolding yes|no` option for a one-run override.
 - Run the validation script in `scripts/validate_resume.py`.
 - If generating a new resume, use `scripts/generate_resume_filename.py` and `scripts/write_resume.py`.
 

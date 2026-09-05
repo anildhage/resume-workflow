@@ -10,6 +10,8 @@ from pathlib import Path
 
 from generate_resume_filename import normalize_role_name, next_resume_index
 
+# Formatting switch: set evidence_bolding to true for keyword/evidence emphasis or false for headings-only output.
+DEFAULT_FORMATTING_CONFIG = Path(__file__).resolve().parents[1] / "career" / "resumeFormatting.yml"
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 BOLD_RE = re.compile(r"\*\*([^*\n]+)\*\*")
 SECTION_NAMES = (
@@ -31,8 +33,29 @@ def section_name(line: str) -> str | None:
     return name if name in SECTION_NAMES else None
 
 
-def normalize_resume_format(content: str) -> str:
+def load_bolding_setting(config_path: Path) -> bool:
+    """Read the intentionally small YAML switch without requiring a YAML package."""
+    if not config_path.exists():
+        return True
+    for line in config_path.read_text(encoding="utf-8").splitlines():
+        if line.strip().startswith("evidence_bolding:"):
+            value = line.split(":", 1)[1].strip().lower()
+            if value in {"true", "yes"}:
+                return True
+            if value in {"false", "no"}:
+                return False
+            raise ValueError("evidence_bolding must be true/yes or false/no")
+    return True
+
+
+def remove_inline_bolding(content: str) -> str:
+    return re.sub(r"\*\*([^*\n]+)\*\*", r"\1", content)
+
+
+def normalize_resume_format(content: str, evidence_bolding: bool) -> str:
     """Apply presentation formatting after the content-quality gate passes."""
+    if not evidence_bolding:
+        content = remove_inline_bolding(content)
     lines = content.strip().splitlines()
     if not lines:
         return content
@@ -79,7 +102,8 @@ def normalize_resume_format(content: str) -> str:
                     skill_values.append(value)
         lines = lines[: skills_index + 1] + ["  |  ".join(skill_values)] + lines[skills_end:]
 
-    return "\n".join(lines).rstrip() + "\n"
+    formatted_content = "\n".join(lines).rstrip() + "\n"
+    return formatted_content if evidence_bolding else remove_inline_bolding(formatted_content)
 
 
 def validate_content(content: str) -> list[str]:
@@ -98,7 +122,7 @@ def validate_content(content: str) -> list[str]:
     return errors
 
 
-def validate_presentation(content: str) -> list[str]:
+def validate_presentation(content: str, evidence_bolding: bool) -> list[str]:
     """Validate the final presentation after cosmetic formatting."""
     lines = content.splitlines()
     errors: list[str] = []
@@ -109,18 +133,20 @@ def validate_presentation(content: str) -> list[str]:
             errors.append(f"Formatted resume is missing the '## {name}' heading.")
 
     bold_spans = BOLD_RE.findall(content)
-    if len(bold_spans) < 10 or len(bold_spans) > 45:
+    if evidence_bolding and (len(bold_spans) < 10 or len(bold_spans) > 45):
         errors.append("Formatted resume must contain between 10 and 45 strategic bold spans.")
+    if not evidence_bolding and bold_spans:
+        errors.append("Headings-only formatting cannot contain inline bold spans.")
 
     work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
     education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
     projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
-    if work_start is not None and not any(
+    if evidence_bolding and work_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[work_start + 1 : education_start]
     ):
         errors.append("Formatted resume must bold at least one supporting action in work experience bullets.")
-    if projects_start is not None and not any(
+    if evidence_bolding and projects_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[projects_start + 1 :]
     ):
@@ -132,6 +158,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Generate a resume file name and save the file only after validation passes.")
     parser.add_argument("--role", required=True, help="Target role, for example 'Data and AI Engineer'.")
     parser.add_argument("--content", help="Resume markdown content to write. If omitted, reads from stdin.")
+    parser.add_argument("--formatting-config", type=Path, default=DEFAULT_FORMATTING_CONFIG)
+    parser.add_argument("--bolding", choices=("yes", "no"), help="Override evidence_bolding for this generation.")
     parser.add_argument(
         "--directory",
         type=Path,
@@ -147,6 +175,11 @@ def main() -> int:
         return 1
 
     content = args.content if args.content is not None else sys.stdin.read()
+    try:
+        evidence_bolding = args.bolding != "no" if args.bolding else load_bolding_setting(args.formatting_config)
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        return 1
 
     content_errors = validate_content(content)
     if content_errors:
@@ -155,8 +188,8 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    formatted_content = normalize_resume_format(content)
-    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content)
+    formatted_content = normalize_resume_format(content, evidence_bolding)
+    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content, evidence_bolding)
     if presentation_errors:
         print("Final presentation validation failed:")
         for error in presentation_errors:
