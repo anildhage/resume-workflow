@@ -55,8 +55,9 @@ This file exists to reduce drift and make resume generation more deterministic f
 8. Preserve all fixed skeleton content without rewriting it.
 9. Replace all placeholders before final output.
 10. Assemble and quality-check an unformatted content draft before presentation formatting.
-11. Apply Markdown headings, bolding, and spacing only after the content gate passes.
-12. Save as a new file in `files/` using the exact naming convention.
+11. Apply Markdown headings and spacing only after the content gate passes.
+12. As the final cosmetic pass, bold supported target-role keywords in the summary and skills, then bold the supporting actions or outcomes in work-experience and project bullets.
+13. Save as a new file in `files/` using the exact naming convention.
 
 ## Validation checklist
 
@@ -70,6 +71,8 @@ The generation process is successful only if all of the following are true:
 - Final output is Markdown
 - Final file is unique and not overwriting anything
 - Filename uses `RoleName-FirstLastName-{n}.md`
+- Summary and skills contain strategic keyword bolding
+- Work experience and projects contain bold supporting evidence, not just repeated keywords
 
 ## Common drift risks to avoid
 
@@ -90,7 +93,7 @@ When a local model processes this repo, it should operate in a strict evidence-f
 - select relevant facts
 - synthesize concise resume content
 - validate the unformatted content against the skeleton and rules
-- apply final presentation formatting
+- apply final presentation formatting, including keyword and supporting-evidence bolding
 - validate the formatted output
 - write output
 - stop once validation passes

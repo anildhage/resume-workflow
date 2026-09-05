@@ -54,7 +54,7 @@ Instead, it must:
 7. Build the Societe Generale position bullets by synthesizing project files, first-person source files, and skills.
 8. Select the most relevant project(s) from `career/projects/`.
 9. Assemble an unformatted content draft and review it for factual accuracy, completeness, role alignment, and placeholder removal.
-10. Apply final Markdown headings, spacing, bolding, and other presentation rules only after the content gate passes.
+10. Apply final Markdown headings and spacing only after the content gate passes, then apply strategic keyword and supporting-evidence bolding as the final cosmetic pass.
 11. Save a new Markdown resume in `career/files/` using the required filename pattern.
 12. Run `python3 scripts/validate_resume.py` before delivering the resume.
 
@@ -73,6 +73,8 @@ SQL Server  |  Advanced querying  |  Data analysis
 Keep the contact details on one line separated by `  |  `, keep selected skills on one pipe-separated line without bullet markers, and put each section heading on its own line above its content.
 
 Formatting is a final presentation step. It must not change the factual content selected during the content-quality stage.
+
+After the content gate passes, bold important target-role keywords in the summary and skills sections. Then bold the supporting action, responsibility, or outcome in work-experience and project bullets that demonstrates how those keywords were used. Final validation requires strategic bolding in both the keyword sections and supporting evidence sections.
 
 ## Non-negotiable rules
 
@@ -119,6 +121,7 @@ Before writing the file, the model must confirm:
 10. File is new and does not overwrite an existing resume.
 11. Content quality was checked before cosmetic formatting was applied.
 12. Final formatting did not introduce placeholders or alter fixed facts.
+13. Final cosmetic formatting includes keyword emphasis and supporting evidence emphasis in work experience and projects.
 
 ## Determinism guidance
 

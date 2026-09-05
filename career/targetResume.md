@@ -37,10 +37,12 @@ Only after all checks pass may the draft receive heading levels, bolding, spacin
 Treat bolding as a required final step, never as part of content drafting. After the content-quality gate passes:
 
 - Bold employer names, job titles, and project names.
-- Bold approximately 10-30 strategically selected terms that directly match the target role and are supported by the source files.
+- Bold approximately 10-45 strategically selected terms that directly match the target role and are supported by the source files.
 - Prioritize terms such as SQL, data mapping, data quality, ETL, technical specifications, UAT, Python, Azure SQL, Airflow, and regulatory reporting when they appear naturally.
+- After capturing the important keywords, bold the strongest supporting action, responsibility, or outcome in relevant work-experience and project bullets to show how each capability was applied. For example, pair **SQL** with **trace report figures to GL and journal data**.
 - Do not bold unsupported job requirements, entire bullet sentences, section headings, or the candidate name.
-- Run the validator only after this cosmetic pass; a resume with fewer than 10 or more than 30 bold spans is incomplete or overformatted and must be revised.
+- Do not mechanically repeat the same keyword in every bullet; emphasize evidence of application instead.
+- Run the validator only after this cosmetic pass; a resume with fewer than 10 or more than 45 bold spans, or without bold supporting evidence in work experience and projects, is incomplete and must be revised.
 
 ## Inputs
 
@@ -129,7 +131,7 @@ Use restrained Markdown bolding to improve recruiter scanability:
 - Bold employer names, job titles, and project names.
 - Review the target job description and identify a small set of high-value matching skills, responsibilities, tools, and domain terms.
 - Bold those matching terms only where the resume statement is directly supported by the source files and the term appears naturally in the summary, skills, experience, or project content.
-- Prefer approximately 10-15 strategically distributed keyword highlights across the resume; do not bold every occurrence or entire bullet sentences.
+- Prefer approximately 10-15 strategically distributed keyword highlights across the summary and skills, then add concise evidence highlights in work experience and projects; do not bold every occurrence or entire bullet sentences.
 - Do not bold unsupported qualifications, inferred experience, or requirements that are only present in the job description.
 - Keep the resume readable for human reviewers; bolding is for emphasis and scanning, not keyword stuffing.
 

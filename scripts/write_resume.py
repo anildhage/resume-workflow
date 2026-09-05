@@ -11,6 +11,7 @@ from pathlib import Path
 from generate_resume_filename import normalize_role_name, next_resume_index
 
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
+BOLD_RE = re.compile(r"\*\*([^*\n]+)\*\*")
 SECTION_NAMES = (
     "CAREER SUMMARY",
     "SKILLS",
@@ -106,6 +107,24 @@ def validate_presentation(content: str) -> list[str]:
     for name in SECTION_NAMES:
         if f"## {name}" not in lines:
             errors.append(f"Formatted resume is missing the '## {name}' heading.")
+
+    bold_spans = BOLD_RE.findall(content)
+    if len(bold_spans) < 10 or len(bold_spans) > 45:
+        errors.append("Formatted resume must contain between 10 and 45 strategic bold spans.")
+
+    work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
+    education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
+    projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
+    if work_start is not None and not any(
+        line.lstrip().startswith("- ") and BOLD_RE.search(line)
+        for line in lines[work_start + 1 : education_start]
+    ):
+        errors.append("Formatted resume must bold at least one supporting action in work experience bullets.")
+    if projects_start is not None and not any(
+        line.lstrip().startswith("- ") and BOLD_RE.search(line)
+        for line in lines[projects_start + 1 :]
+    ):
+        errors.append("Formatted resume must bold at least one supporting action in project bullets.")
     return errors
 
 
