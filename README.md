@@ -56,6 +56,20 @@ Instead, it must:
 9. Generate a new Markdown resume in `career/files/` using the required filename pattern.
 10. Run `python3 scripts/validate_resume.py` before saving or delivering the resume.
 
+### Resume formatting
+
+Generated resumes must use the standard Markdown header and skills layout:
+
+```markdown
+Anil Dhage  
+Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage
+---
+SKILLS
+SQL Server  |  Advanced querying  |  Data analysis
+```
+
+Keep the contact details on one line separated by `  |  `, and keep selected skills on one pipe-separated line without bullet markers.
+
 ## Non-negotiable rules
 
 The model must not:

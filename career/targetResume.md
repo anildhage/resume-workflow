@@ -76,6 +76,15 @@ Select the skills that best match the target role and the requirements of the op
 
 Use only skills supported by `skills.md` and the other career source files. Keep skill names clear, searchable, and easy for an ATS or API consumer to parse.
 
+### Resume formatting
+
+Preserve the standard Markdown resume header:
+
+- Keep `Anil Dhage` on the first line.
+- Put the location, phone, email, and LinkedIn URL on one second line separated by `  |  `.
+- Put `---` immediately below the contact line.
+- Render the selected `SKILLS` entries on one line, separated by `  |  `, without bullet markers.
+
 ### Société Générale work experience
 
 For the placeholder under:

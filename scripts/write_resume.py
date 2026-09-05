@@ -11,6 +11,46 @@ from pathlib import Path
 from generate_resume_filename import normalize_role_name, next_resume_index
 
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
+SECTION_HEADING_RE = re.compile(r"^[A-Z][A-Z &/]+$")
+
+
+def normalize_resume_format(content: str) -> str:
+    """Apply the canonical header and skills layout before saving a resume."""
+    lines = content.strip().splitlines()
+    if not lines:
+        return content
+
+    name_index = next((index for index, line in enumerate(lines) if line.strip() == "Anil Dhage"), None)
+    if name_index is not None:
+        header_end = next(
+            (index for index in range(name_index + 1, len(lines)) if lines[index].strip() == "CAREER SUMMARY"),
+            name_index + 1,
+        )
+        lines = lines[:name_index] + [
+            "Anil Dhage  ",
+            "Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage",
+            "---",
+        ] + lines[header_end:]
+
+    skills_index = next((index for index, line in enumerate(lines) if line.strip() == "SKILLS"), None)
+    if skills_index is not None:
+        skills_end = next(
+            (
+                index
+                for index in range(skills_index + 1, len(lines))
+                if SECTION_HEADING_RE.fullmatch(lines[index].strip())
+            ),
+            len(lines),
+        )
+        skill_values = []
+        for line in lines[skills_index + 1 : skills_end]:
+            for value in line.split("|"):
+                value = re.sub(r"^\s*[-*]\s*", "", value).strip()
+                if value and not value.lower().startswith("to be updated"):
+                    skill_values.append(value)
+        lines = lines[: skills_index + 1] + ["  |  ".join(skill_values)] + lines[skills_end:]
+
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def validate_content(content: str) -> list[str]:
@@ -43,6 +83,7 @@ def main() -> int:
     content = args.content
     if content is None:
         content = sys.stdin.read()
+    content = normalize_resume_format(content)
 
     errors = validate_content(content)
     if errors:

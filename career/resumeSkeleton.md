@@ -1,14 +1,12 @@
-Anil Dhage
-Montreal, Quebec
-+1 514 235 8388
-i.am.dhage@gmail.com
-linkedin.com/in/anil-dhage
+Anil Dhage  
+Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage
+---
 
 CAREER SUMMARY
 - to be updated
 
 SKILLS
-- to be updated
+- to be updated (replace with selected skills separated by ` | ` on one line)
 
 WORK EXPERIENCE
 Societe Generale Investment Banking

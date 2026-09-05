@@ -18,6 +18,8 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-04 | Resume generation | Added save-time normalization so contact details and selected skills are rendered consistently across generated resumes. | 2026-09-04 |
+| 2026-09-04 | Resume formatting | Standardized the skeleton and generation guidance for a two-line contact header and pipe-separated one-line skills section. | 2026-09-04 |
 | 2026-09-04 | Documentation and summaries | Documented the profile-maintenance workflow in README, aligned update guides and checklist, and refreshed role summaries to the skeleton-derived 8+ years claim. | 2026-09-04 |
 | 2026-09-04 | Profile consistency | Added stable profile facts, skeleton-based experience calculation, validator enforcement, and refreshed generated experience claims to 8+ years. | 2026-09-04 |
 | 2026-09-04 | Generated resume | Added SQL-focused Sales Database Associate Analyst resume emphasizing SQL Server integration, data cleansing, auditing, and reporting controls. | 2026-09-04 |
