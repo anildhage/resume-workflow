@@ -6,4 +6,4 @@ pdf_build:
   # PDF filename inside career/files/pdf/.
   pdf_file: NetworkGrowthAnalyst-AnilDhage-1.pdf
   # false: fail if the PDF already exists. true: replace it intentionally.
-  overwrite: false
+  overwrite: true
