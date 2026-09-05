@@ -31,6 +31,10 @@ When generating a resume, the model must follow this priority order:
 7. `career/firstPersonVoice/*.md` — detailed narrative and operational context
 8. `career/files/` — output destination only; never as an input source
 
+### Output isolation rule
+
+During target-resume creation, never read, list, search, index, enter, or otherwise scan `career/files/`. Treat it as a write-only output directory. Resume content, facts, summaries, skills, project selections, experience calculations, and validation decisions must come exclusively from approved source files outside `career/files/`. The only permitted output-directory access is the final file-creation step and the minimal uniqueness check performed by the save script.
+
 ## Summary generation rule
 
 The model must not directly copy a single summary file into the final resume.
@@ -55,7 +59,7 @@ Instead, it must:
 8. Select the most relevant project(s) from `career/projects/`.
 9. Assemble an unformatted content draft and review it for factual accuracy, completeness, role alignment, and placeholder removal.
 10. Apply final Markdown headings and spacing only after the content gate passes, then apply strategic keyword and supporting-evidence bolding as the final cosmetic pass.
-11. Save a new Markdown resume in `career/files/` using the required filename pattern.
+11. Save a new Markdown resume in `career/files/` using the required filename pattern. Do not inspect the output directory for source material during this process.
 12. Run `python3 scripts/validate_resume.py` before delivering the resume.
 
 ### Resume formatting
@@ -230,6 +234,6 @@ The checklist covers:
 - `career/skills/skills.md` — reusable skill taxonomy
 - `career/projects/` — project evidence
 - `career/firstPersonVoice/` — narrative context
-- `career/files/` — generated output files
+- `career/files/` — generated output files only; never scan or read during resume creation
 
 This repo is intentionally designed to be deterministic: fixed facts stay fixed, dynamic content is selected from approved evidence, and final output remains faithful to the source material.

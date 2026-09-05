@@ -41,7 +41,11 @@ This file exists to reduce drift and make resume generation more deterministic f
 - `firstPersonVoice/resumeAndInterviewPrep.md`
 
 ### Output location
-- `files/` — generated resume outputs live here
+- `files/` — generated resume outputs live here; write-only during resume creation
+
+### Output isolation
+
+Never read, list, search, index, enter, or scan `files/` while creating a target resume. It is not a source directory and must not influence content selection, experience calculations, validation decisions, or resume wording. Access it only for the final save and the save script's minimal uniqueness check.
 
 ## Deterministic operating rules
 
@@ -85,6 +89,7 @@ The generation process is successful only if all of the following are true:
 - allowing placeholder text to remain in the output
 - copying a stale experience number from an older generated resume
 - creating output files without checking the existing count in `files/`
+- scanning or reading `files/` as part of source discovery or resume drafting
 - applying cosmetic formatting before content quality has been checked
 
 ## Suggested agent behavior

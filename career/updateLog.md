@@ -18,6 +18,8 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-04 | Resume output isolation | Restricted target-resume creation to approved source files and made `career/files/` write-only except for final save and filename uniqueness. | 2026-09-04 |
+| 2026-09-04 | Data Scientist resume | Added a Data Scientist summary and generated a validated resume emphasizing operational analysis, Python/SQL automation, financial data quality, Azure workflows, reporting, and stakeholder communication. | 2026-09-04 |
 | 2026-09-04 | Resume generation workflow | Enforced content-first quality validation, cosmetic-last formatting, canonical Markdown headings, and final presentation checks across the generation contract and scripts. | 2026-09-04 |
 | 2026-09-04 | Resume cosmetic workflow | Required final keyword bolding plus supporting action and outcome bolding in work experience and projects, with save-time validation. | 2026-09-04 |
 | 2026-09-04 | Resume formatting switch | Added YAML-controlled evidence bolding with per-run yes/no override and headings-only formatting support. | 2026-09-04 |

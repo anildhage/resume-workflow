@@ -6,6 +6,10 @@ This file is the instruction contract for generating role-targeted resumes. When
 
 The generated resume must remain accurate to my experience, relevant to the target role, concise, professional, and compatible with the structure of the skeleton.
 
+## Output isolation
+
+`notes/career/files/` is a write-only output directory during target-resume creation. Never read, list, search, index, enter, or scan it, and never use an existing generated resume as source material. All drafting, source selection, experience calculations, and content or formatting decisions must use approved files outside this directory. The save operation may write the new file there and may perform only the minimal uniqueness check required by the save script.
+
 ## Generation sequence
 
 Follow this order for every resume:
@@ -211,7 +215,7 @@ For this profile, use `AnilDhage` for `FirstLastName`. Convert the target role i
 - `DataAndAIEngineer-AnilDhage-3.md`
 - `FinanceProductionSupportAnalyst-AnilDhage-4.md`
 
-Before creating the file, count the existing `.md` files directly inside `notes/career/files/`. The new file’s increment number must be one greater than that count. Do not reuse an existing filename or overwrite an existing resume. If files have gaps in their numbers, still use the count plus one, as specified by this rule.
+Do not manually inspect or count files in `notes/career/files/`. Let `scripts/write_resume.py` perform the minimal uniqueness check and assign the next increment number during the final save. Do not reuse an existing filename or overwrite an existing resume. If files have gaps in their numbers, the save script still uses the count plus one, as specified by this rule.
 
 ## Final checks before writing
 

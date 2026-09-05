@@ -4,6 +4,11 @@ Use this quick checklist whenever you refresh the repo with new experience, skil
 
 ## Quick refresh routine
 
+### Output isolation
+- Treat `career/files/` as write-only output during target-resume creation.
+- Do not read, list, search, index, enter, or scan it for source material or drafting decisions.
+- Access it only for the final save and the save script's minimal uniqueness check.
+
 ### 1. Review new experience
 - Did you gain a new role, employer, or major responsibility?
 - Do you need to update the fixed resume skeleton or just the evidence files?

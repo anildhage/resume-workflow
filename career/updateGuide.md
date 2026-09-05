@@ -6,6 +6,10 @@ This file explains how to keep the repository accurate as your career grows and 
 
 The repo should act as a living source of truth for future resume generation. As you gain work experience, new projects, new responsibilities, and new skills, the evidence files should be updated in a structured way so the local LLM can stay current and produce better, more accurate resumes.
 
+## Output isolation during resume creation
+
+Never read, list, search, index, enter, or scan `career/files/` while creating a target resume. This directory is write-only output, not source material. Use only approved source files outside it for drafting, evidence selection, experience calculations, and validation decisions; access `career/files/` only for the final save and the save script's minimal uniqueness check.
+
 ## Core rule
 
 Do not rewrite the fixed resume structure unless the underlying factual content truly changes.
