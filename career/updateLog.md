@@ -18,6 +18,10 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-05 | Ubuntu setup documentation | Added `ubuntu-setup.md` with system packages, virtual-environment setup, verification, JD-driven resume generation, PDF output, validation, and troubleshooting instructions. | 2026-09-05 |
+| 2026-09-05 | Resume build contract | Audited the full workflow, required matching Markdown/PDF outputs, made PDF validation mandatory, cleaned up partial outputs on conversion failure, and configured VS Code to use `.venv`. | 2026-09-05 |
+| 2026-09-05 | Job-description resume workflow | Clarified that a user-provided JD starts the complete agent workflow and produces validated Markdown followed by the matching PDF without requiring manual script inputs. | 2026-09-05 |
+| 2026-09-04 | Markdown and PDF output workflow | Added a virtual-environment-based pipeline that validates and saves Markdown under `career/files/md/`, then renders the matching styled PDF under `career/files/pdf/`. | 2026-09-04 |
 | 2026-09-04 | Resume output isolation | Restricted target-resume creation to approved source files and made `career/files/` write-only except for final save and filename uniqueness. | 2026-09-04 |
 | 2026-09-04 | Data Scientist resume | Added a Data Scientist summary and generated a validated resume emphasizing operational analysis, Python/SQL automation, financial data quality, Azure workflows, reporting, and stakeholder communication. | 2026-09-04 |
 | 2026-09-04 | Resume generation workflow | Enforced content-first quality validation, cosmetic-last formatting, canonical Markdown headings, and final presentation checks across the generation contract and scripts. | 2026-09-04 |

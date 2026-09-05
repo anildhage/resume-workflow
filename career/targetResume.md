@@ -4,25 +4,29 @@
 
 This file is the instruction contract for generating role-targeted resumes. When an API reads this file, it should use these rules to create a new Markdown resume from the fixed resume skeleton and the career information stored in the folders described below.
 
+When the user provides a job description and asks for a resume, treat that request as the start of the complete build workflow. Extract the target role and selection criteria from the job description, create the evidence-grounded resume content, and invoke `scripts/write_resume.py` after drafting. The user should not need to provide raw Markdown content or run the writer manually. A successful build produces both a validated Markdown file in `career/files/md/` and its matching styled PDF in `career/files/pdf/`.
+
 The generated resume must remain accurate to my experience, relevant to the target role, concise, professional, and compatible with the structure of the skeleton.
 
 ## Output isolation
 
-`notes/career/files/` is a write-only output directory during target-resume creation. Never read, list, search, index, enter, or scan it, and never use an existing generated resume as source material. All drafting, source selection, experience calculations, and content or formatting decisions must use approved files outside this directory. The save operation may write the new file there and may perform only the minimal uniqueness check required by the save script.
+`notes/career/files/` is a write-only output directory during target-resume creation. Never read, list, search, index, enter, or scan it, and never use an existing generated resume as source material. All drafting, source selection, experience calculations, and content or formatting decisions must use approved files outside this directory. The save operation writes validated Markdown to `notes/career/files/md/`, then renders the matching PDF to `notes/career/files/pdf/`.
 
 ## Generation sequence
 
 Follow this order for every resume:
 
-1. Build the content draft from the target role, the fixed skeleton, and verified career evidence.
-2. Perform a content-quality review before applying Markdown formatting or keyword emphasis.
-3. Apply the final resume structure, heading levels, spacing, and other presentation rules.
-4. As the final presentation pass, apply strategic bolding to supported employer names, job titles, project names, and high-value target-role terms.
-5. Run the final structural, placeholder, and bolding validation after all formatting is complete.
+1. Read the user-provided job description and identify the target role, required capabilities, tools, responsibilities, and relevant keywords.
+2. Build the content draft from the job description, the fixed skeleton, and verified career evidence.
+3. Perform a content-quality review before applying Markdown formatting or keyword emphasis.
+4. Apply the final resume structure, heading levels, spacing, and other presentation rules.
+5. As the final presentation pass, apply strategic bolding to supported employer names, job titles, project names, and high-value target-role terms.
+6. Run the final structural, placeholder, and bolding validation after all formatting is complete.
+7. Invoke `scripts/write_resume.py` with the drafted Markdown content; it saves the validated Markdown first and then renders the PDF.
 
 Formatting is the last presentation stage. It must never be used to hide missing content, unsupported claims, weak evidence, or unresolved placeholders.
 
-The cosmetic mode is controlled by `career/resumeFormatting.yml`. When `evidence_bolding` is `true`, apply keyword and supporting-evidence bolding. When it is `false`, remove inline bolding and keep only Markdown heading hierarchy. The category switches control which emphasis categories are requested: `bold_keywords` for summary and skills, `bold_supporting_actions` for work and project evidence, and the employer, title, and project switches for their labels. A one-run master override is available with `scripts/write_resume.py --bolding yes` or `--bolding no`.
+The cosmetic mode is controlled by `career/resumeFormatting.yml`. When `evidence_bolding` is `true`, apply keyword and supporting-evidence bolding. When it is `false`, remove inline bolding and keep only Markdown heading hierarchy. The category switches control which emphasis categories are requested: `bold_keywords` for summary and skills, `bold_supporting_actions` for work and project evidence, and the employer, title, and project switches for their labels. A one-run master override is available with `scripts/write_resume.py --bolding yes` or `--bolding no`. PDF rendering uses `career/resume.css` and preserves Markdown bold as PDF bold text.
 
 ### Content-quality gate
 
@@ -196,17 +200,21 @@ Project descriptions should explain the problem or purpose, what I built or co-d
 - Preserve the distinction between systemic-risk reporting, liquidity reporting, and internal P&L performance reporting.
 - Avoid unsupported claims, inflated metrics, or technologies that do not appear in the source material.
 - Do not use first-person pronouns in the final resume bullets unless the skeleton or target format specifically requires them. The source material may be first person, but the generated resume should follow standard professional resume conventions.
-- Keep the final output in Markdown.
+- Keep the source output in Markdown and create the matching PDF after validation.
 
 ## Output location and filename
 
 Create every generated resume as a new `.md` file inside:
 
-`notes/career/files/`
+`notes/career/files/md/`
+
+Then create the matching styled PDF inside:
+
+`notes/career/files/pdf/`
 
 Use this exact filename pattern:
 
-`RoleName-FirstLastName-{incrementNumberBasedOnFileCountInThisFolder}.md`
+`RoleName-FirstLastName-{incrementNumberBasedOnFileCountInMdFolder}.md`; use the same stem with `.pdf` for the PDF.
 
 For this profile, use `AnilDhage` for `FirstLastName`. Convert the target role into a filename-safe `RoleName` by removing spaces and punctuation and using PascalCase. Examples:
 
@@ -215,7 +223,7 @@ For this profile, use `AnilDhage` for `FirstLastName`. Convert the target role i
 - `DataAndAIEngineer-AnilDhage-3.md`
 - `FinanceProductionSupportAnalyst-AnilDhage-4.md`
 
-Do not manually inspect or count files in `notes/career/files/`. Let `scripts/write_resume.py` perform the minimal uniqueness check and assign the next increment number during the final save. Do not reuse an existing filename or overwrite an existing resume. If files have gaps in their numbers, the save script still uses the count plus one, as specified by this rule.
+Do not manually inspect or count files in `notes/career/files/md/` or `notes/career/files/pdf/`. Let `scripts/write_resume.py` perform the minimal uniqueness check and assign the next increment number during the final save. Do not reuse an existing filename or overwrite an existing resume. If files have gaps in their numbers, the save script still uses the count plus one, as specified by this rule.
 
 ## Final checks before writing
 
@@ -229,5 +237,6 @@ Before saving a generated resume, confirm that:
 6. Société Générale bullets were grounded in `projects/`, `skills/`, and `firstPersonVoice/`.
 7. Projects came from `notes/career/projects/`.
 8. The experience claim matches the value calculated from the dated professional roles in `resumeSkeleton.md`.
-9. The output is Markdown and uses the required filename pattern.
-10. The output is a new file in `notes/career/files/` and does not overwrite another file.
+9. The Markdown output uses the required filename pattern and the PDF uses the same filename stem.
+10. Both outputs are new files in `notes/career/files/md/` and `notes/career/files/pdf/` and do not overwrite another file.
+11. The matching PDF exists and is a valid PDF before delivery.

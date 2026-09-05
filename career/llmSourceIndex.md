@@ -41,11 +41,12 @@ This file exists to reduce drift and make resume generation more deterministic f
 - `firstPersonVoice/resumeAndInterviewPrep.md`
 
 ### Output location
-- `files/` — generated resume outputs live here; write-only during resume creation
+- `files/md/` — generated Markdown resumes; write-only during resume creation
+- `files/pdf/` — matching generated PDFs; write-only during resume creation
 
 ### Output isolation
 
-Never read, list, search, index, enter, or scan `files/` while creating a target resume. It is not a source directory and must not influence content selection, experience calculations, validation decisions, or resume wording. Access it only for the final save and the save script's minimal uniqueness check.
+Never read, list, search, index, enter, or scan `files/md/` or `files/pdf/` while creating a target resume. They are not source directories and must not influence content selection, experience calculations, validation decisions, or resume wording. Access them only for final output creation, matching-file checks, and validation.
 
 ## Deterministic operating rules
 
@@ -61,7 +62,7 @@ Never read, list, search, index, enter, or scan `files/` while creating a target
 10. Assemble and quality-check an unformatted content draft before presentation formatting.
 11. Apply Markdown headings and spacing only after the content gate passes.
 12. As the final cosmetic pass, bold supported target-role keywords in the summary and skills, then bold the supporting actions or outcomes in work-experience and project bullets.
-13. Save as a new file in `files/` using the exact naming convention.
+13. Any request to build or create a resume from job description or job-role details starts the complete workflow. Save the validated Markdown in `files/md/`, then save the matching PDF in `files/pdf/` using the exact naming convention. Do not claim completion unless both files exist.
 
 The cosmetic mode is controlled by `career/resumeFormatting.yml`: `evidence_bolding: true` enables the emphasis workflow, while `false` removes inline bolding and retains only Markdown heading hierarchy. The category switches specify keyword, supporting-action, employer, title, and project emphasis. `scripts/write_resume.py --bolding yes|no` overrides the master setting for a single run.
 
@@ -74,9 +75,9 @@ The generation process is successful only if all of the following are true:
 - Skills are selected from `skills/skills.md`
 - Projects are selected from `projects/`
 - SG experience bullets are grounded in project + first-person evidence
-- Final output is Markdown
+- Final output is a validated Markdown file in `files/md/` and a matching styled PDF in `files/pdf/`
 - Final file is unique and not overwriting anything
-- Filename uses `RoleName-FirstLastName-{n}.md`
+- Markdown filename uses `RoleName-FirstLastName-{n}.md`; the PDF uses the same stem with `.pdf`
 - Summary and skills contain strategic keyword bolding
 - Work experience and projects contain bold supporting evidence, not just repeated keywords
 
@@ -88,8 +89,8 @@ The generation process is successful only if all of the following are true:
 - generating project or role content from memory instead of source files
 - allowing placeholder text to remain in the output
 - copying a stale experience number from an older generated resume
-- creating output files without checking the existing count in `files/`
-- scanning or reading `files/` as part of source discovery or resume drafting
+- creating output files without checking the existing count in `files/md/`
+- scanning or reading `files/md/` or `files/pdf/` as part of source discovery or resume drafting
 - applying cosmetic formatting before content quality has been checked
 
 ## Suggested agent behavior

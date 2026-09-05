@@ -34,6 +34,9 @@ FORMATTING_KEYS = {
     "minimum_bold_spans",
     "maximum_bold_spans",
 }
+DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parents[1] / "career" / "files"
+DEFAULT_MARKDOWN_DIRECTORY = DEFAULT_OUTPUT_ROOT / "md"
+DEFAULT_PDF_DIRECTORY = DEFAULT_OUTPUT_ROOT / "pdf"
 
 
 @dataclass(frozen=True)
@@ -255,8 +258,20 @@ def main() -> int:
     parser.add_argument(
         "--directory",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "career" / "files",
-        help="Directory where resumes are saved.",
+        default=DEFAULT_MARKDOWN_DIRECTORY,
+        help="Directory where validated Markdown resumes are saved.",
+    )
+    parser.add_argument(
+        "--pdf-directory",
+        type=Path,
+        default=DEFAULT_PDF_DIRECTORY,
+        help="Directory where rendered PDF resumes are saved.",
+    )
+    parser.add_argument(
+        "--css",
+        type=Path,
+        default=Path(__file__).resolve().parents[1] / "career" / "resume.css",
+        help="CSS stylesheet used for PDF rendering.",
     )
     args = parser.parse_args()
 
@@ -295,13 +310,27 @@ def main() -> int:
     index = next_resume_index(output_dir)
     filename = f"{role_name}-AnilDhage-{index}.md"
     target = output_dir / filename
+    pdf_target = args.pdf_directory / f"{target.stem}.pdf"
 
-    if target.exists():
-        print(f"Error: '{target.name}' already exists. Choose a new role or clean the directory.")
+    if target.exists() or pdf_target.exists():
+        print(f"Error: output for '{target.stem}' already exists. Choose a new role or clean the output directories.")
         return 1
 
     target.write_text(formatted_content, encoding="utf-8")
-    print(f"Saved: {target}")
+    temporary_pdf = pdf_target.with_name(f".{pdf_target.name}.tmp")
+    try:
+        from render_resume import render_resume
+
+        render_resume(target, temporary_pdf, args.css)
+        temporary_pdf.replace(pdf_target)
+    except Exception as exc:
+        target.unlink(missing_ok=True)
+        temporary_pdf.unlink(missing_ok=True)
+        print(f"PDF conversion failed: {exc}")
+        return 1
+
+    print(f"Markdown saved: {target}")
+    print(f"PDF saved: {pdf_target}")
     return 0
 
 

@@ -5,9 +5,9 @@ Use this quick checklist whenever you refresh the repo with new experience, skil
 ## Quick refresh routine
 
 ### Output isolation
-- Treat `career/files/` as write-only output during target-resume creation.
-- Do not read, list, search, index, enter, or scan it for source material or drafting decisions.
-- Access it only for the final save and the save script's minimal uniqueness check.
+- Treat `career/files/md/` and `career/files/pdf/` as write-only output during target-resume creation.
+- Do not read, list, search, index, enter, or scan them for source material or drafting decisions.
+- Access them only for final output creation, matching-file checks, and validation.
 
 ### 1. Review new experience
 - Did you gain a new role, employer, or major responsibility?
@@ -45,6 +45,8 @@ Use this quick checklist whenever you refresh the repo with new experience, skil
 - Check `career/resumeFormatting.yml` before generation: use `evidence_bolding: true` for keyword/evidence emphasis or `false` for headings-only output. Use the writer’s `--bolding yes|no` option for a one-run override.
 - Run the validation script in `scripts/validate_resume.py`.
 - If generating a new resume, use `scripts/generate_resume_filename.py` and `scripts/write_resume.py`.
+- Any semantic request to build or create a resume from JD or job-role details must produce both a validated Markdown file in `career/files/md/` and its matching PDF in `career/files/pdf/`.
+- Confirm the matching PDF exists and begins with the PDF signature before delivery.
 
 ## Optional final check
 

@@ -42,7 +42,7 @@ def main() -> int:
     parser.add_argument(
         "--directory",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "career" / "files",
+        default=Path(__file__).resolve().parents[1] / "career" / "files" / "md",
         help="Directory where generated resumes are saved.",
     )
     args = parser.parse_args()

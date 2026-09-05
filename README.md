@@ -16,7 +16,7 @@ The repo separates fixed facts from dynamic content:
 - Skills live in `career/skills/skills.md`
 - Project evidence lives in `career/projects/`
 - First-person narrative evidence lives in `career/firstPersonVoice/`
-- Output resumes are written to `career/files/`
+- Output resumes are written as Markdown to `career/files/md/` and PDFs to `career/files/pdf/`
 
 ## Source priority order
 
@@ -29,11 +29,11 @@ When generating a resume, the model must follow this priority order:
 5. `career/skills/skills.md` — skills selection
 6. `career/projects/*.md` — project evidence and achievements
 7. `career/firstPersonVoice/*.md` — detailed narrative and operational context
-8. `career/files/` — output destination only; never as an input source
+8. `career/files/md/` and `career/files/pdf/` — output destinations only; never as input sources
 
 ### Output isolation rule
 
-During target-resume creation, never read, list, search, index, enter, or otherwise scan `career/files/`. Treat it as a write-only output directory. Resume content, facts, summaries, skills, project selections, experience calculations, and validation decisions must come exclusively from approved source files outside `career/files/`. The only permitted output-directory access is the final file-creation step and the minimal uniqueness check performed by the save script.
+During target-resume creation, never read, list, search, index, enter, or otherwise scan `career/files/md/` or `career/files/pdf/` for source material. Treat them as write-only output directories. Resume content, facts, summaries, skills, project selections, experience calculations, and validation decisions must come exclusively from approved source files outside `career/files/`.
 
 ## Summary generation rule
 
@@ -49,6 +49,8 @@ Instead, it must:
 
 ### Required workflow
 
+When a job description is provided, the user-facing action is simply to ask for a resume tailored to that job description. The agent extracts the role requirements, selects only supported evidence, drafts the Markdown resume, and invokes the writer. The writer then validates and saves the Markdown before converting it to PDF. The user does not need to supply a `--content` argument or run the scripts manually.
+
 1. Read `career/targetResume.md` and identify the target role.
 2. Read `career/resumeSkeleton.md` and preserve all constant sections exactly.
 3. Read `career/profileFacts.md` for stable cross-role facts and recurring capabilities.
@@ -59,8 +61,9 @@ Instead, it must:
 8. Select the most relevant project(s) from `career/projects/`.
 9. Assemble an unformatted content draft and review it for factual accuracy, completeness, role alignment, and placeholder removal.
 10. Apply final Markdown headings and spacing only after the content gate passes, then apply strategic keyword and supporting-evidence bolding as the final cosmetic pass.
-11. Save a new Markdown resume in `career/files/` using the required filename pattern. Do not inspect the output directory for source material during this process.
-12. Run `python3 scripts/validate_resume.py` before delivering the resume.
+11. Save a new Markdown resume in `career/files/md/` using the required filename pattern. Do not inspect the output directory for source material during this process.
+12. After the validated Markdown file is written, render its PDF counterpart into `career/files/pdf/`.
+13. Run `python3 scripts/validate_resume.py` before delivering the resume.
 
 ### Resume formatting
 
@@ -97,7 +100,17 @@ The model must not:
 
 ## Output contract
 
-Every generated resume must be a new `.md` file under `career/files/`.
+Every generated resume must be a new `.md` file under `career/files/md/`, followed by a same-name `.pdf` file under `career/files/pdf/`.
+
+Use the repository virtual environment for deterministic generation:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python scripts/write_resume.py --role "Data Scientist" --content "<generated Markdown draft>"
+```
+
+The writer completes Markdown content and presentation validation before starting PDF conversion. Markdown bold spans such as `**SQL**` are rendered as bold PDF text through `career/resume.css`.
 
 Required pattern:
 
@@ -125,7 +138,7 @@ Before writing the file, the model must confirm:
 6. SG bullets were grounded in `career/projects/` and `career/firstPersonVoice/`.
 7. Projects came from `career/projects/`.
 8. The experience statement matches the value calculated from `career/resumeSkeleton.md` using the current date.
-9. Output is Markdown.
+9. Output includes validated Markdown in `career/files/md/` and a matching PDF in `career/files/pdf/`.
 10. File is new and does not overwrite an existing resume.
 11. Content quality was checked before cosmetic formatting was applied.
 12. Final formatting did not introduce placeholders or alter fixed facts.
@@ -164,7 +177,7 @@ Update the repo whenever you:
 - `career/skills/skills.md` — add or refine skills as they become part of your professional toolkit
 - `career/projects/` — create a new project note for each significant initiative or workstream
 - `career/firstPersonVoice/` — add or expand narrative evidence that supports interviews or resume bullets
-- `career/files/` — generated output only; do not use as an input source
+- `career/files/md/` and `career/files/pdf/` — generated output only; do not use as input sources
 
 ### Recommended update workflow
 
@@ -187,7 +200,7 @@ Update the repo whenever you:
 | Broader professional strength or career direction | `profileFacts.md` | relevant summaries, skills, update log |
 | New target job application | target-specific summary or new summary file | skills, projects, generated resume, validation |
 
-The generated resume files under `career/files/` are outputs, not source material. Normally, do not edit them as the primary fix. Update the source files first, then generate a new resume.
+The generated resume files under `career/files/md/` and `career/files/pdf/` are outputs, not source material. Normally, do not edit them as the primary fix. Update the source files first, then generate a new resume.
 
 ### Maintainer habits
 
@@ -234,6 +247,7 @@ The checklist covers:
 - `career/skills/skills.md` — reusable skill taxonomy
 - `career/projects/` — project evidence
 - `career/firstPersonVoice/` — narrative context
-- `career/files/` — generated output files only; never scan or read during resume creation
+- `career/files/md/` — generated Markdown output only; never scan or read during resume creation
+- `career/files/pdf/` — generated PDF output corresponding to validated Markdown
 
 This repo is intentionally designed to be deterministic: fixed facts stay fixed, dynamic content is selected from approved evidence, and final output remains faithful to the source material.

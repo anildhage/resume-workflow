@@ -8,7 +8,7 @@ The repo should act as a living source of truth for future resume generation. As
 
 ## Output isolation during resume creation
 
-Never read, list, search, index, enter, or scan `career/files/` while creating a target resume. This directory is write-only output, not source material. Use only approved source files outside it for drafting, evidence selection, experience calculations, and validation decisions; access `career/files/` only for the final save and the save script's minimal uniqueness check.
+Never read, list, search, index, enter, or scan `career/files/md/` or `career/files/pdf/` while creating a target resume. These are write-only output directories, not source material. Use only approved source files outside them for drafting, evidence selection, experience calculations, and validation decisions; access them only for final output creation, matching-file checks, and validation.
 
 ## Core rule
 
@@ -82,7 +82,7 @@ Use this pattern when adding new material:
 - New first-person narrative under `career/firstPersonVoice/` when needed
 - New role summary under `career/careerSummary/` if relevant to a target role
 - New skill entries in `career/skills/skills.md`
-- Optional new generated output under `career/files/` after a successful resume generation
+- Generated Markdown under `career/files/md/` and the matching PDF under `career/files/pdf/` after a successful resume generation
 
 ## Naming and file conventions
 
@@ -91,6 +91,7 @@ Follow these conventions consistently:
 - Project files: use clear descriptive names
 - Role summary files: use the target-role naming convention, such as `dataEngineer.md`
 - Output resumes: follow the pattern from `targetResume.md` and the validation scripts
+- Output Markdown belongs in `career/files/md/`; the matching PDF belongs in `career/files/pdf/`
 - Keep the file names readable and search-friendly
 
 ## Validation before finalizing edits
@@ -102,6 +103,7 @@ After any update, check the following:
 3. New facts are grounded in actual evidence files.
 4. Skills, projects, and summaries are still consistent with your work history.
 5. Resume output still follows the repo naming and validation rules.
+6. Every generated Markdown resume has a matching valid PDF in `career/files/pdf/`.
 
 ## Suggested maintainer habits
 

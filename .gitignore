@@ -1,4 +1,6 @@
-# Python bytecode and test/tool caches
+.venv/
+__pycache__/
+*.py[cod]# Python bytecode and test/tool caches
 __pycache__/
 *.py[cod]
 *$py.class
