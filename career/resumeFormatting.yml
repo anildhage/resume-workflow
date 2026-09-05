@@ -1,18 +1,54 @@
 # Cosmetic plug-in settings. These run only after functional resume validation passes.
+# Use true/false for switches. Markdown settings affect the generated .md file.
 formatting:
-	# Master switch: enable the cosmetic emphasis workflow; false means headings-only output.
+	# true: keep the strategic Markdown emphasis workflow enabled.
+	# false: remove inline **bold** spans from the .md output and keep headings/layout only.
 	evidence_bolding: true
-	# Bold important target-role keywords in the career summary and skills sections.
+	# true: keep target-role keywords bold in CAREER SUMMARY and SKILLS.
+	# false: remove keyword bolding from those two sections in the .md output.
 	bold_keywords: true
-	# Bold the supporting actions, responsibilities, or outcomes in experience and project bullets.
+	# true: keep bold supporting actions, responsibilities, and outcomes in bullets.
+	# false: remove that evidence emphasis from work-experience and project bullets.
 	bold_supporting_actions: true
-	# Bold employer names in the work experience section.
+	# true: bold employer/organization names in WORK EXPERIENCE.
+	# false: leave those names at normal Markdown text weight.
 	bold_employer_names: true
-	# Bold job titles in the work experience section.
+	# true: bold job titles and their role metadata in WORK EXPERIENCE.
+	# false: leave job-title metadata at normal Markdown text weight.
 	bold_job_titles: true
-	# Bold project names in the projects section.
+	# true: bold project names in PROJECTS.
+	# false: leave project names at normal Markdown text weight.
 	bold_project_names: true
-	# Minimum number of strategic bold spans required when evidence_bolding is enabled.
+	# Minimum number of inline bold spans required by final .md validation.
 	minimum_bold_spans: 10
-	# Maximum number of strategic bold spans allowed to keep the resume readable.
+	# Maximum number of inline bold spans allowed by final .md validation.
 	maximum_bold_spans: 45
+
+# PDF-only cosmetic controls. Markdown generation does not use these settings.
+# PDF is rendered only after the validated .md file has been written.
+pdf:
+	# true: generate the PDF normally; false: stop the build because PDF is mandatory.
+	enabled: true
+	# true: render Markdown **bold** spans as bold in the PDF.
+	# false: render inline Markdown emphasis at normal weight in the PDF only.
+	bold_inline_content: true
+	# true: make organization names larger and bold in the PDF.
+	# false: render organization names at normal weight.
+	bold_organization_names: true
+	# true: make title, location, employment type, and dates bold in the PDF.
+	# false: render that role metadata at normal weight.
+	bold_role_metadata: true
+	# Base PDF font size in points. Example: 10.5 means 10.5pt body text.
+	body_font_size: 10.5
+	# Main section heading size in points, such as WORK EXPERIENCE or PROJECTS.
+	section_heading_size: 12.5
+	# Organization-name size in points; normally slightly larger than body text.
+	organization_name_size: 11.5
+	# Role/location/date metadata size in points; normally smaller than organization names.
+	role_metadata_size: 10.0
+	# CSS page margins. Use CSS units such as in, cm, or pt.
+	page_margin: "0.55in 0.65in"
+	# Main text color in six-digit hexadecimal CSS format.
+	body_color: "#111111"
+	# Horizontal-rule and section-divider color in six-digit hexadecimal CSS format.
+	rule_color: "#777777"

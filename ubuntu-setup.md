@@ -168,6 +168,8 @@ PDF styling is defined in `career/resume.css`. The renderer uses standard Markdo
 
 becomes bold text in the PDF. The stylesheet controls page size, margins, font stack, headings, spacing, bullets, rules, and bold weight.
 
+PDF-only cosmetic settings are controlled in the `pdf:` section of `career/resumeFormatting.yml`. This section can adjust organization and role metadata emphasis, heading and body sizes, page margins, text color, and rule color without changing the Markdown generation settings under `formatting:`.
+
 To change the visual appearance, update `career/resume.css` and generate a new resume. Do not manually edit generated PDFs as the primary fix.
 
 ## VS Code on Ubuntu

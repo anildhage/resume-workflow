@@ -18,6 +18,11 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-05 | Resume formatting configuration | Expanded `resumeFormatting.yml` comments to document every Markdown and PDF cosmetic control, switch behavior, units, and color formats without changing configuration values. | 2026-09-05 |
+| 2026-09-05 | PDF cosmetic controls | Added independent PDF control for inline bold content while retaining separate organization-name and role-metadata emphasis switches. | 2026-09-05 |
+| 2026-09-05 | PDF cosmetic plugin | Added YAML-controlled PDF presentation settings for typography, margins, colors, organization-name emphasis, and role metadata emphasis while keeping Markdown controls separate. | 2026-09-05 |
+| 2026-09-05 | PDF resume styling | Improved PDF-only hierarchy with larger section headings, bold organization names, and smaller bold role/location/date metadata without changing Markdown generation. | 2026-09-05 |
+| 2026-09-05 | Network Growth Analyst resume | Generated a validated, JD-tailored Markdown resume and matching styled PDF emphasizing SQL analysis, metric definition, hypothesis testing, financial modeling, data quality, and cross-functional recommendations. | 2026-09-05 |
 | 2026-09-05 | Ubuntu setup documentation | Added `ubuntu-setup.md` with system packages, virtual-environment setup, verification, JD-driven resume generation, PDF output, validation, and troubleshooting instructions. | 2026-09-05 |
 | 2026-09-05 | Resume build contract | Audited the full workflow, required matching Markdown/PDF outputs, made PDF validation mandatory, cleaned up partial outputs on conversion failure, and configured VS Code to use `.venv`. | 2026-09-05 |
 | 2026-09-05 | Job-description resume workflow | Clarified that a user-provided JD starts the complete agent workflow and produces validated Markdown followed by the matching PDF without requiring manual script inputs. | 2026-09-05 |

@@ -112,6 +112,8 @@ python3 -m venv .venv
 
 The writer completes Markdown content and presentation validation before starting PDF conversion. Markdown bold spans such as `**SQL**` are rendered as bold PDF text through `career/resume.css`.
 
+The same `career/resumeFormatting.yml` file contains a separate `pdf:` section for PDF-only presentation controls. These settings do not change Markdown generation. They control PDF enablement, inline Markdown emphasis, organization-name emphasis, role/location/date emphasis, heading sizes, body size, margins, and colors. The renderer applies them as overrides to `career/resume.css`.
+
 Required pattern:
 
 `RoleName-FirstLastName-{incrementNumberBasedOnFileCountInThisFolder}.md`

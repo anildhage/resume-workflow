@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from generate_resume_filename import normalize_role_name, next_resume_index
@@ -34,6 +34,19 @@ FORMATTING_KEYS = {
     "minimum_bold_spans",
     "maximum_bold_spans",
 }
+PDF_KEYS = {
+    "enabled",
+    "bold_inline_content",
+    "bold_organization_names",
+    "bold_role_metadata",
+    "body_font_size",
+    "section_heading_size",
+    "organization_name_size",
+    "role_metadata_size",
+    "page_margin",
+    "body_color",
+    "rule_color",
+}
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parents[1] / "career" / "files"
 DEFAULT_MARKDOWN_DIRECTORY = DEFAULT_OUTPUT_ROOT / "md"
 DEFAULT_PDF_DIRECTORY = DEFAULT_OUTPUT_ROOT / "pdf"
@@ -49,6 +62,22 @@ class FormattingSettings:
     bold_project_names: bool = True
     minimum_bold_spans: int = 10
     maximum_bold_spans: int = 45
+    pdf: "PdfSettings" = field(default_factory=lambda: PdfSettings())
+
+
+@dataclass(frozen=True)
+class PdfSettings:
+    enabled: bool = True
+    bold_inline_content: bool = True
+    bold_organization_names: bool = True
+    bold_role_metadata: bool = True
+    body_font_size: float = 10.5
+    section_heading_size: float = 12.5
+    organization_name_size: float = 11.5
+    role_metadata_size: float = 10.0
+    page_margin: str = "0.55in 0.65in"
+    body_color: str = "#111111"
+    rule_color: str = "#777777"
 
 
 def section_name(line: str) -> str | None:
@@ -60,31 +89,54 @@ def section_name(line: str) -> str | None:
 
 
 def load_formatting_settings(config_path: Path) -> FormattingSettings:
-    """Read the small, scalar-only YAML plug-in config without a third-party dependency."""
+    """Read the scalar Markdown and PDF cosmetic plug-in settings without a dependency."""
     if not config_path.exists():
         return FormattingSettings()
-    values: dict[str, bool | int] = {}
+    formatting_values: dict[str, bool | int] = {}
+    pdf_values: dict[str, bool | float | str] = {}
+    section = None
     for line in config_path.read_text(encoding="utf-8").splitlines():
         stripped = line.strip()
         if not stripped or stripped.startswith("#") or ":" not in stripped:
             continue
         key, raw_value = (part.strip() for part in stripped.split(":", 1))
-        if key == "formatting":
+        if key in {"formatting", "pdf"} and not raw_value:
+            section = key
             continue
-        if key not in FORMATTING_KEYS:
+        if section == "formatting":
+            valid_keys = FORMATTING_KEYS
+        elif section == "pdf":
+            valid_keys = PDF_KEYS
+        else:
+            raise ValueError(f"Unsupported formatting section for setting: {key}")
+        if key not in valid_keys:
             raise ValueError(f"Unsupported formatting setting: {key}")
         value = raw_value.lower()
         if value in {"true", "yes"}:
-            values[key] = True
+            parsed_value: bool | float | str = True
         elif value in {"false", "no"}:
-            values[key] = False
-        elif value.isdigit():
-            values[key] = int(value)
+            parsed_value = False
+        elif re.fullmatch(r"\d+(?:\.\d+)?", raw_value):
+            parsed_value = float(raw_value) if "." in raw_value else int(raw_value)
         else:
-            raise ValueError(f"Invalid value for {key}: {raw_value}")
-    settings = FormattingSettings(**values)
+            parsed_value = raw_value.strip('"\'')
+        if section == "formatting":
+            formatting_values[key] = parsed_value  # type: ignore[assignment]
+        else:
+            pdf_values[key] = parsed_value
+    settings = FormattingSettings(**formatting_values, pdf=PdfSettings(**pdf_values))
     if settings.minimum_bold_spans < 0 or settings.maximum_bold_spans < settings.minimum_bold_spans:
         raise ValueError("Bold span limits must be non-negative and ordered minimum <= maximum")
+    if any(
+        value <= 0
+        for value in (
+            settings.pdf.body_font_size,
+            settings.pdf.section_heading_size,
+            settings.pdf.organization_name_size,
+            settings.pdf.role_metadata_size,
+        )
+    ):
+        raise ValueError("PDF font sizes must be positive")
     return settings
 
 
@@ -321,7 +373,7 @@ def main() -> int:
     try:
         from render_resume import render_resume
 
-        render_resume(target, temporary_pdf, args.css)
+        render_resume(target, temporary_pdf, args.css, settings.pdf)
         temporary_pdf.replace(pdf_target)
     except Exception as exc:
         target.unlink(missing_ok=True)
