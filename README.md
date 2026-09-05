@@ -78,7 +78,7 @@ After the content gate passes, bold important target-role keywords in the summar
 
 ### Cosmetic mode switch
 
-Set `evidence_bolding: true` or `false` in `career/resumeFormatting.yml`. `true` enables keyword and supporting-evidence bolding; `false` produces a clean resume with only Markdown headings. Override the setting for one run with `python3 scripts/write_resume.py --role "Business Analyst" --bolding yes` or `--bolding no`.
+Set the switches in `career/resumeFormatting.yml`. `evidence_bolding: true` enables the cosmetic plug-in; `false` produces a clean resume with only Markdown headings. The category switches control keyword, supporting-action, employer, title, and project emphasis. Override the master setting for one run with `python3 scripts/write_resume.py --role "Business Analyst" --bolding yes` or `--bolding no`.
 
 ## Non-negotiable rules
 

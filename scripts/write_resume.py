@@ -6,11 +6,12 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 from generate_resume_filename import normalize_role_name, next_resume_index
 
-# Formatting switch: set evidence_bolding to true for keyword/evidence emphasis or false for headings-only output.
+# Formatting plug-in switch: edit resumeFormatting.yml to control the final cosmetic pass.
 DEFAULT_FORMATTING_CONFIG = Path(__file__).resolve().parents[1] / "career" / "resumeFormatting.yml"
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 BOLD_RE = re.compile(r"\*\*([^*\n]+)\*\*")
@@ -23,6 +24,28 @@ SECTION_NAMES = (
     "PROJECTS",
 )
 SECTION_HEADING_RE = re.compile(r"^\s*(?:#{1,6}\s*)?(?:\*\*)?([A-Z][A-Z &/]*)\s*(?:\*\*)?\s*$")
+FORMATTING_KEYS = {
+    "evidence_bolding",
+    "bold_keywords",
+    "bold_supporting_actions",
+    "bold_employer_names",
+    "bold_job_titles",
+    "bold_project_names",
+    "minimum_bold_spans",
+    "maximum_bold_spans",
+}
+
+
+@dataclass(frozen=True)
+class FormattingSettings:
+    evidence_bolding: bool = True
+    bold_keywords: bool = True
+    bold_supporting_actions: bool = True
+    bold_employer_names: bool = True
+    bold_job_titles: bool = True
+    bold_project_names: bool = True
+    minimum_bold_spans: int = 10
+    maximum_bold_spans: int = 45
 
 
 def section_name(line: str) -> str | None:
@@ -33,28 +56,89 @@ def section_name(line: str) -> str | None:
     return name if name in SECTION_NAMES else None
 
 
-def load_bolding_setting(config_path: Path) -> bool:
-    """Read the intentionally small YAML switch without requiring a YAML package."""
+def load_formatting_settings(config_path: Path) -> FormattingSettings:
+    """Read the small, scalar-only YAML plug-in config without a third-party dependency."""
     if not config_path.exists():
-        return True
+        return FormattingSettings()
+    values: dict[str, bool | int] = {}
     for line in config_path.read_text(encoding="utf-8").splitlines():
-        if line.strip().startswith("evidence_bolding:"):
-            value = line.split(":", 1)[1].strip().lower()
-            if value in {"true", "yes"}:
-                return True
-            if value in {"false", "no"}:
-                return False
-            raise ValueError("evidence_bolding must be true/yes or false/no")
-    return True
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or ":" not in stripped:
+            continue
+        key, raw_value = (part.strip() for part in stripped.split(":", 1))
+        if key == "formatting":
+            continue
+        if key not in FORMATTING_KEYS:
+            raise ValueError(f"Unsupported formatting setting: {key}")
+        value = raw_value.lower()
+        if value in {"true", "yes"}:
+            values[key] = True
+        elif value in {"false", "no"}:
+            values[key] = False
+        elif value.isdigit():
+            values[key] = int(value)
+        else:
+            raise ValueError(f"Invalid value for {key}: {raw_value}")
+    settings = FormattingSettings(**values)
+    if settings.minimum_bold_spans < 0 or settings.maximum_bold_spans < settings.minimum_bold_spans:
+        raise ValueError("Bold span limits must be non-negative and ordered minimum <= maximum")
+    return settings
 
 
 def remove_inline_bolding(content: str) -> str:
     return re.sub(r"\*\*([^*\n]+)\*\*", r"\1", content)
 
 
-def normalize_resume_format(content: str, evidence_bolding: bool) -> str:
+def remove_bolding_from_lines(lines: list[str], predicate) -> list[str]:
+    return [remove_inline_bolding(line) if predicate(line) else line for line in lines]
+
+
+def apply_formatting_settings(lines: list[str], settings: FormattingSettings) -> list[str]:
+    if not settings.bold_keywords:
+        summary_start = next((index for index, line in enumerate(lines) if line.strip() == "## CAREER SUMMARY"), None)
+        skills_start = next((index for index, line in enumerate(lines) if line.strip() == "## SKILLS"), None)
+        work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), len(lines))
+        if summary_start is not None:
+            end = skills_start if skills_start is not None else work_start
+            lines = [
+                remove_inline_bolding(line) if summary_start < index < end else line
+                for index, line in enumerate(lines)
+            ]
+        if skills_start is not None:
+            end = work_start
+            lines = [
+                remove_inline_bolding(line) if skills_start < index < end else line
+                for index, line in enumerate(lines)
+            ]
+    if not settings.bold_supporting_actions:
+        work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
+        education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
+        projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
+        if work_start is not None:
+            lines = [
+                remove_inline_bolding(line) if work_start < index < education_start and line.startswith("- ") else line
+                for index, line in enumerate(lines)
+            ]
+        if projects_start is not None:
+            lines = [
+                remove_inline_bolding(line) if projects_start < index and line.startswith("  - ") else line
+                for index, line in enumerate(lines)
+            ]
+    if not settings.bold_employer_names:
+        lines = remove_bolding_from_lines(
+            lines,
+            lambda line: line.strip().startswith("**") and line.strip().endswith("**") and "|" not in line,
+        )
+    if not settings.bold_job_titles:
+        lines = remove_bolding_from_lines(lines, lambda line: bool(re.search(r"\|\s*\d{2}/\d{4}\s*-", line)))
+    if not settings.bold_project_names:
+        lines = remove_bolding_from_lines(lines, lambda line: line.startswith("- **") and "|" in line)
+    return lines
+
+
+def normalize_resume_format(content: str, settings: FormattingSettings) -> str:
     """Apply presentation formatting after the content-quality gate passes."""
-    if not evidence_bolding:
+    if not settings.evidence_bolding:
         content = remove_inline_bolding(content)
     lines = content.strip().splitlines()
     if not lines:
@@ -97,13 +181,18 @@ def normalize_resume_format(content: str, evidence_bolding: bool) -> str:
         skill_values = []
         for line in lines[skills_index + 1 : skills_end]:
             for value in line.split("|"):
-                value = re.sub(r"^\s*[-*]\s*", "", value).strip()
+                value = re.sub(r"^\s*(?:-\s+|\*\s+)", "", value).strip()
+                if not settings.bold_keywords:
+                    value = remove_inline_bolding(value)
                 if value and not value.lower().startswith("to be updated"):
                     skill_values.append(value)
         lines = lines[: skills_index + 1] + ["  |  ".join(skill_values)] + lines[skills_end:]
 
+    if settings.evidence_bolding:
+        lines = apply_formatting_settings(lines, settings)
+
     formatted_content = "\n".join(lines).rstrip() + "\n"
-    return formatted_content if evidence_bolding else remove_inline_bolding(formatted_content)
+    return formatted_content if settings.evidence_bolding else remove_inline_bolding(formatted_content)
 
 
 def validate_content(content: str) -> list[str]:
@@ -122,7 +211,7 @@ def validate_content(content: str) -> list[str]:
     return errors
 
 
-def validate_presentation(content: str, evidence_bolding: bool) -> list[str]:
+def validate_presentation(content: str, settings: FormattingSettings) -> list[str]:
     """Validate the final presentation after cosmetic formatting."""
     lines = content.splitlines()
     errors: list[str] = []
@@ -133,20 +222,23 @@ def validate_presentation(content: str, evidence_bolding: bool) -> list[str]:
             errors.append(f"Formatted resume is missing the '## {name}' heading.")
 
     bold_spans = BOLD_RE.findall(content)
-    if evidence_bolding and (len(bold_spans) < 10 or len(bold_spans) > 45):
-        errors.append("Formatted resume must contain between 10 and 45 strategic bold spans.")
-    if not evidence_bolding and bold_spans:
+    if settings.evidence_bolding and (len(bold_spans) < settings.minimum_bold_spans or len(bold_spans) > settings.maximum_bold_spans):
+        errors.append(
+            f"Formatted resume must contain between {settings.minimum_bold_spans} and "
+            f"{settings.maximum_bold_spans} strategic bold spans."
+        )
+    if not settings.evidence_bolding and bold_spans:
         errors.append("Headings-only formatting cannot contain inline bold spans.")
 
     work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
     education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
     projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
-    if evidence_bolding and work_start is not None and not any(
+    if settings.evidence_bolding and settings.bold_supporting_actions and work_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[work_start + 1 : education_start]
     ):
         errors.append("Formatted resume must bold at least one supporting action in work experience bullets.")
-    if evidence_bolding and projects_start is not None and not any(
+    if settings.evidence_bolding and settings.bold_supporting_actions and projects_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[projects_start + 1 :]
     ):
@@ -176,7 +268,9 @@ def main() -> int:
 
     content = args.content if args.content is not None else sys.stdin.read()
     try:
-        evidence_bolding = args.bolding != "no" if args.bolding else load_bolding_setting(args.formatting_config)
+        settings = load_formatting_settings(args.formatting_config)
+        if args.bolding:
+            settings = FormattingSettings(**{**settings.__dict__, "evidence_bolding": args.bolding == "yes"})
     except ValueError as exc:
         print(f"Error: {exc}")
         return 1
@@ -188,8 +282,8 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    formatted_content = normalize_resume_format(content, evidence_bolding)
-    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content, evidence_bolding)
+    formatted_content = normalize_resume_format(content, settings)
+    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content, settings)
     if presentation_errors:
         print("Final presentation validation failed:")
         for error in presentation_errors:

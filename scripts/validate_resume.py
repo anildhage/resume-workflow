@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 from calculate_experience import experience_years
+from write_resume import DEFAULT_FORMATTING_CONFIG, FormattingSettings, load_formatting_settings
 
 DEFAULT_PATTERN = re.compile(r"^[A-Za-z]+-AnilDhage-\d+\.md$")
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
@@ -37,7 +38,11 @@ def collect_resume_files(directory: Path) -> list[Path]:
     return sorted(p for p in directory.iterdir() if p.is_file() and p.suffix.lower() == ".md")
 
 
-def validate_file(file_path: Path, expected_experience_years: int) -> list[str]:
+def validate_file(
+    file_path: Path,
+    expected_experience_years: int,
+    settings: FormattingSettings,
+) -> list[str]:
     errors: list[str] = []
     file_name = file_path.name
 
@@ -75,21 +80,24 @@ def validate_file(file_path: Path, expected_experience_years: int) -> list[str]:
         )
 
     bold_spans = BOLD_RE.findall(content)
-    if bold_spans and (len(bold_spans) < 10 or len(bold_spans) > 45):
+    if settings.evidence_bolding and (len(bold_spans) < settings.minimum_bold_spans or len(bold_spans) > settings.maximum_bold_spans):
         errors.append(
             f"'{file_name}' contains {len(bold_spans)} bold spans. "
-            "Evidence-bold formatting must contain between 10 and 45 strategic bold spans, or contain none for headings-only formatting."
+            f"Evidence-bold formatting must contain between {settings.minimum_bold_spans} and "
+            f"{settings.maximum_bold_spans} strategic bold spans."
         )
+    if not settings.evidence_bolding and bold_spans:
+        errors.append(f"'{file_name}' must contain no inline bold spans in headings-only mode.")
 
     work_start = next((index for index, line in enumerate(lines) if line.strip() == "## WORK EXPERIENCE"), None)
     education_start = next((index for index, line in enumerate(lines) if line.strip() == "## EDUCATION"), len(lines))
     projects_start = next((index for index, line in enumerate(lines) if line.strip() == "## PROJECTS"), None)
-    if bold_spans and work_start is not None and not any(
+    if settings.evidence_bolding and settings.bold_supporting_actions and work_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[work_start + 1 : education_start]
     ):
         errors.append(f"'{file_name}' must bold at least one supporting action in work experience bullets.")
-    if bold_spans and projects_start is not None and not any(
+    if settings.evidence_bolding and settings.bold_supporting_actions and projects_start is not None and not any(
         line.lstrip().startswith("- ") and BOLD_RE.search(line)
         for line in lines[projects_start + 1 :]
     ):
@@ -112,6 +120,12 @@ def main() -> int:
         default=Path(__file__).resolve().parents[1] / "career" / "resumeSkeleton.md",
         help="Authoritative skeleton used to calculate experience.",
     )
+    parser.add_argument(
+        "--formatting-config",
+        type=Path,
+        default=DEFAULT_FORMATTING_CONFIG,
+        help="Cosmetic formatting configuration file.",
+    )
     args = parser.parse_args()
 
     resume_files = collect_resume_files(args.directory)
@@ -121,9 +135,14 @@ def main() -> int:
         return 0
 
     expected_experience_years = experience_years(args.skeleton)
+    try:
+        settings = load_formatting_settings(args.formatting_config)
+    except ValueError as exc:
+        print(f"Formatting configuration failed: {exc}")
+        return 1
     all_errors: list[str] = []
     for file_path in resume_files:
-        all_errors.extend(validate_file(file_path, expected_experience_years))
+        all_errors.extend(validate_file(file_path, expected_experience_years, settings))
 
     if all_errors:
         print("Resume validation failed:")

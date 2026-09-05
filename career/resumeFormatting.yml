@@ -1,2 +1,18 @@
-# Set evidence_bolding to false for a clean headings-only resume.
-evidence_bolding: true
+# Cosmetic plug-in settings. These run only after functional resume validation passes.
+formatting:
+	# Master switch: enable the cosmetic emphasis workflow; false means headings-only output.
+	evidence_bolding: true
+	# Bold important target-role keywords in the career summary and skills sections.
+	bold_keywords: true
+	# Bold the supporting actions, responsibilities, or outcomes in experience and project bullets.
+	bold_supporting_actions: true
+	# Bold employer names in the work experience section.
+	bold_employer_names: true
+	# Bold job titles in the work experience section.
+	bold_job_titles: true
+	# Bold project names in the projects section.
+	bold_project_names: true
+	# Minimum number of strategic bold spans required when evidence_bolding is enabled.
+	minimum_bold_spans: 10
+	# Maximum number of strategic bold spans allowed to keep the resume readable.
+	maximum_bold_spans: 45

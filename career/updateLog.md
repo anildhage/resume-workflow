@@ -21,6 +21,7 @@ Use this log whenever you add or revise content in the repo so the author always
 | 2026-09-04 | Resume generation workflow | Enforced content-first quality validation, cosmetic-last formatting, canonical Markdown headings, and final presentation checks across the generation contract and scripts. | 2026-09-04 |
 | 2026-09-04 | Resume cosmetic workflow | Required final keyword bolding plus supporting action and outcome bolding in work experience and projects, with save-time validation. | 2026-09-04 |
 | 2026-09-04 | Resume formatting switch | Added YAML-controlled evidence bolding with per-run yes/no override and headings-only formatting support. | 2026-09-04 |
+| 2026-09-04 | Cosmetic plug-in settings | Added configurable keyword, supporting-action, employer, job-title, project-name, and bold-span controls with consistent writer and validator behavior. | 2026-09-04 |
 | 2026-09-04 | Resume generation | Added save-time normalization so contact details and selected skills are rendered consistently across generated resumes. | 2026-09-04 |
 | 2026-09-04 | Resume formatting | Standardized the skeleton and generation guidance for a two-line contact header and pipe-separated one-line skills section. | 2026-09-04 |
 | 2026-09-04 | Documentation and summaries | Documented the profile-maintenance workflow in README, aligned update guides and checklist, and refreshed role summaries to the skeleton-derived 8+ years claim. | 2026-09-04 |

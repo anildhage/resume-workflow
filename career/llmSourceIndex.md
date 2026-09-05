@@ -59,7 +59,7 @@ This file exists to reduce drift and make resume generation more deterministic f
 12. As the final cosmetic pass, bold supported target-role keywords in the summary and skills, then bold the supporting actions or outcomes in work-experience and project bullets.
 13. Save as a new file in `files/` using the exact naming convention.
 
-The cosmetic mode is controlled by `career/resumeFormatting.yml`: `evidence_bolding: true` enables the emphasis workflow, while `false` removes inline bolding and retains only Markdown heading hierarchy. `scripts/write_resume.py --bolding yes|no` overrides it for a single run.
+The cosmetic mode is controlled by `career/resumeFormatting.yml`: `evidence_bolding: true` enables the emphasis workflow, while `false` removes inline bolding and retains only Markdown heading hierarchy. The category switches specify keyword, supporting-action, employer, title, and project emphasis. `scripts/write_resume.py --bolding yes|no` overrides the master setting for a single run.
 
 ## Validation checklist
 
