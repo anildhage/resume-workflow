@@ -18,6 +18,7 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-05 | Private profile workflow | Moved personal resume sources into the Git-ignored `profiles/` workspace, added public starter templates and profile initialization, and made generation and validation profile-aware. | 2026-09-05 |
 | 2026-09-05 | Public documentation | Replaced the long README with a public tutorial, organized setup and workflow guides under `docs/`, and moved Ubuntu setup documentation into `docs/ubuntu-setup.md`. | 2026-09-05 |
 | 2026-09-05 | PDF-only regeneration | Added `career/pdfBuild.yml`, `scripts/build_pdf.py`, and `build-pdf.command` for controlled PDF regeneration from an edited Markdown resume using shared PDF cosmetics and explicit overwrite protection. | 2026-09-05 |
 | 2026-09-05 | README workflow documentation | Updated the concise README contract for JD-triggered Markdown/PDF generation, `.venv` execution, PDF cosmetics, and page-break handling. | 2026-09-05 |

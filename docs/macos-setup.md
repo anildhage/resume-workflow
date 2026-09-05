@@ -51,6 +51,7 @@ Use the agent workflow described in the root README, or test the writer manually
 
 ```bash
 .venv/bin/python scripts/write_resume.py \
+  --profile profiles/local \
   --role "Data Scientist" \
   --content "<generated Markdown draft>"
 ```
@@ -58,7 +59,7 @@ Use the agent workflow described in the root README, or test the writer manually
 Then validate:
 
 ```bash
-.venv/bin/python scripts/validate_resume.py
+.venv/bin/python scripts/validate_resume.py --profile profiles/local
 ```
 
 ## VS Code

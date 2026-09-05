@@ -1,9 +1,9 @@
 # PDF-only regeneration settings.
 # Edit these values, then run: ./build-pdf.command
 pdf_build:
-  # Markdown filename inside career/files/md/.
-  markdown_file: NetworkGrowthAnalyst-AnilDhage-1.md
-  # PDF filename inside career/files/pdf/.
-  pdf_file: NetworkGrowthAnalyst-AnilDhage-1.pdf
+  # Markdown filename inside career/files/md/. Replace with your generated filename.
+  markdown_file: RoleName-YourName-1.md
+  # PDF filename inside career/files/pdf/. Use the same filename stem.
+  pdf_file: RoleName-YourName-1.pdf
   # false: fail if the PDF already exists. true: replace it intentionally.
   overwrite: true

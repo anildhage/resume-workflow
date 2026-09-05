@@ -1,10 +1,20 @@
 # Make This Repository Yours
 
-The repository currently contains Anil Dhage's resume information. That is intentional for the current user. Before using a public copy for yourself, replace the profile content carefully.
+Personal resume data belongs in the ignored `profiles/` directory. The public repository contains safe starter templates under `templates/`.
+
+## 0. Create Your Private Profile
+
+From the repository root, run:
+
+```bash
+python3 scripts/init_profile.py
+```
+
+This creates `profiles/local/` and copies the starter templates into it. Do not force-add this directory to Git.
 
 ## 1. Replace the Resume Skeleton
 
-Edit `career/resumeSkeleton.md` first. Replace:
+Edit `profiles/local/resumeSkeleton.md` first. Replace:
 
 - name and contact line
 - employers and job titles
@@ -16,22 +26,22 @@ Keep the section names and overall structure. The experience calculator reads da
 
 ## 2. Replace Profile Facts
 
-Edit `career/profileFacts.md` with your stable professional identity, strengths, and recurring capabilities. Keep this file short. Do not put every project detail here.
+Edit `profiles/local/profileFacts.md` with your stable professional identity, strengths, and recurring capabilities. Keep this file short. Do not put every project detail here.
 
 ## 3. Add Your Evidence
 
 Use the existing folders as a simple evidence library:
 
-- Add role summaries to `career/careerSummary/`.
-- Add skills you have actually used to `career/skills/skills.md`.
-- Add one concise Markdown note per substantial project to `career/projects/`.
-- Add interview-ready context to `career/firstPersonVoice/`.
+- Add role summaries to `profiles/local/careerSummary/`.
+- Add skills you have actually used to `profiles/local/skills/skills.md`.
+- Add one concise Markdown note per substantial project to `profiles/local/projects/`.
+- Add interview-ready context to `profiles/local/firstPersonVoice/`.
 
 Use `career/sourceNoteTemplate.md` when creating a new project or evidence note.
 
 ## 4. Update the Generation Rules
 
-Edit `career/targetResume.md` so its examples and wording match your profile. Replace the Anil-specific name, contact examples, and filename examples with your own values.
+Edit `profiles/local/targetResume.md` so its examples and wording match your profile. Replace every starter placeholder with your own values.
 
 The rules should say that the generator must:
 
@@ -44,12 +54,7 @@ The rules should say that the generator must:
 
 ## 5. Check the Scripts
 
-The current scripts also contain Anil-specific header and filename validation. For a truly reusable public tool, either:
-
-- keep the scripts as a personal version and document that users must replace those values, or
-- refactor them to load name, contact details, and filename identity from a profile configuration file.
-
-The second option is the better long-term design. See the main README's portability note before publishing a multi-user version.
+The scripts load name, contact details, filename identity, and source paths from `profiles/local/profile.yml`. Use another profile directory with `--profile` when needed.
 
 ## 6. Update the Log
 

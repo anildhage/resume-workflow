@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Generate the next valid resume filename for this profile."""
+"""Generate the next valid resume filename for a profile."""
 
 from __future__ import annotations
 
 import argparse
 import re
 from pathlib import Path
+
+from profile import DEFAULT_PROFILE_DIRECTORY, load_profile
 
 
 def normalize_role_name(role: str) -> str:
@@ -25,7 +27,7 @@ def normalize_role_name(role: str) -> str:
     return role_name
 
 
-def next_resume_index(directory: Path) -> int:
+def next_resume_index(directory: Path, filename_name: str) -> int:
     if not directory.exists():
         return 1
 
@@ -34,7 +36,7 @@ def next_resume_index(directory: Path) -> int:
         for path in directory.iterdir()
         if path.is_file()
         and path.suffix.lower() == ".md"
-        and (match := re.fullmatch(r"^[A-Za-z0-9]+-AnilDhage-(\d+)\.md$", path.name))
+        and (match := re.fullmatch(rf"^[A-Za-z0-9]+-{re.escape(filename_name)}-(\d+)\.md$", path.name))
     ]
     return max(indexes, default=0) + 1
 
@@ -42,6 +44,8 @@ def next_resume_index(directory: Path) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate the next valid resume filename.")
     parser.add_argument("--role", required=True, help="Target role, for example 'Data and AI Engineer'.")
+    parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE_DIRECTORY, help="Private profile directory.")
+    parser.add_argument("--filename-name", help="Override the profile filename identity.")
     parser.add_argument(
         "--directory",
         type=Path,
@@ -52,14 +56,15 @@ def main() -> int:
 
     try:
         role_name = normalize_role_name(args.role)
+        filename_name = args.filename_name or load_profile(args.profile).filename_name
     except ValueError as exc:
         print(f"Error: {exc}")
         return 1
 
     output_dir = args.directory
     output_dir.mkdir(parents=True, exist_ok=True)
-    index = next_resume_index(output_dir)
-    filename = f"{role_name}-AnilDhage-{index}.md"
+    index = next_resume_index(output_dir, filename_name)
+    filename = f"{role_name}-{filename_name}-{index}.md"
     print(filename)
     return 0
 

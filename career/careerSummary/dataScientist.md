@@ -1,3 +1,0 @@
-# Data Scientist
-
-Data and business analyst with 8+ years of experience turning complex financial and operational data into reliable reporting and actionable business information. Applies Python, Pandas, SQL, data cleansing, reconciliation, anomaly investigation, root-cause analysis, and A/B testing to support end-to-end analysis and operational improvement. Experienced partnering with business and technology teams to define requirements, automate repeatable data workflows, validate analytical outputs, and communicate findings through financial, regulatory, management, and dashboard reporting. Brings practical experience with Azure data workflows, Python ETL, Power BI data preparation, and structured problem-solving across large and complex datasets.

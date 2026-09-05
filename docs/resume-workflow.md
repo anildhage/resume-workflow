@@ -4,11 +4,11 @@
 
 1. Add or paste a job description to your agent workflow.
 2. Identify the target role and important requirements.
-3. Read the skeleton and approved evidence files.
+3. Read the skeleton and approved evidence files under `profiles/local/`.
 4. Draft a role-specific summary, skills line, work bullets, and project selection.
 5. Check factual accuracy and remove all placeholders.
 6. Apply Markdown headings and strategic bolding.
-7. Run `scripts/write_resume.py`.
+7. Run `scripts/write_resume.py --profile profiles/local`.
 8. Confirm that both Markdown and PDF files were created.
 9. Run the validator.
 
@@ -20,6 +20,7 @@ The writer accepts a complete Markdown draft:
 
 ```bash
 .venv/bin/python scripts/write_resume.py \
+  --profile profiles/local \
   --role "Data Scientist" \
   --content "<generated Markdown draft>"
 ```
@@ -29,7 +30,7 @@ The draft must contain all required sections and must satisfy the profile's fixe
 ## Validate Outputs
 
 ```bash
-.venv/bin/python scripts/validate_resume.py
+.venv/bin/python scripts/validate_resume.py --profile profiles/local
 ```
 
 Validation checks filenames, required sections, placeholder removal, the experience claim, bolding rules, matching PDFs, and PDF validity.
@@ -37,7 +38,7 @@ Validation checks filenames, required sections, placeholder removal, the experie
 ## Calculate Experience
 
 ```bash
-.venv/bin/python scripts/calculate_experience.py
+.venv/bin/python scripts/calculate_experience.py --profile profiles/local
 ```
 
 The calculation uses dated roles in `career/resumeSkeleton.md` and the current date. To test a historical date:

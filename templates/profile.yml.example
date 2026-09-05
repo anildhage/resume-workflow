@@ -1,0 +1,7 @@
+# Copy this file to profiles/local/profile.yml and replace every value.
+name: Your Name
+filename_name: YourName
+location: Your City, Country
+phone: "+1 000 000 0000"
+email: you@example.com
+linkedin: linkedin.com/in/your-profile

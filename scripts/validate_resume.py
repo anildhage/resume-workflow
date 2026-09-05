@@ -2,7 +2,7 @@
 """Validate generated resume files in career/files.
 
 Rules enforced:
-- filename must match: RoleName-AnilDhage-{N}.md
+- filename must match: RoleName-ProfileName-{N}.md
 - placeholder text '- to be updated' must not appear
 - final resume must contain a readable amount of strategic Markdown bolding
 - output directory may be empty, but if files exist they must conform
@@ -16,10 +16,9 @@ import sys
 from pathlib import Path
 
 from calculate_experience import experience_years
-from write_resume import DEFAULT_FORMATTING_CONFIG, FormattingSettings, load_formatting_settings
+from profile import DEFAULT_PROFILE_DIRECTORY, load_profile
+from write_resume import FormattingSettings, load_formatting_settings
 
-DEFAULT_PATTERN = re.compile(r"^[A-Za-z0-9]+-AnilDhage-\d+\.md$")
-DEFAULT_PDF_DIRECTORY = Path(__file__).resolve().parents[1] / "career" / "files" / "pdf"
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 EXPERIENCE_RE = re.compile(r"\b(\d+)\+ years of experience\b")
 BOLD_RE = re.compile(r"\*\*([^*\n]+)\*\*")
@@ -55,13 +54,16 @@ def validate_file(
     file_path: Path,
     expected_experience_years: int,
     settings: FormattingSettings,
+    profile_name: str,
+    profile_display_name: str,
 ) -> list[str]:
     errors: list[str] = []
     file_name = file_path.name
 
-    if not DEFAULT_PATTERN.fullmatch(file_name):
+    pattern = re.compile(rf"^[A-Za-z0-9]+-{re.escape(profile_name)}-\d+\.md$")
+    if not pattern.fullmatch(file_name):
         errors.append(
-            f"Invalid filename '{file_name}'. Expected format: RoleName-AnilDhage-<number>.md"
+            f"Invalid filename '{file_name}'. Expected format: RoleName-{profile_name}-<number>.md"
         )
 
     try:
@@ -75,8 +77,8 @@ def validate_file(
         )
 
     lines = content.splitlines()
-    if not lines or lines[0].strip() != "# Anil Dhage":
-        errors.append(f"'{file_name}' must start with '# Anil Dhage'.")
+    if not lines or lines[0].strip() != f"# {profile_display_name}":
+        errors.append(f"'{file_name}' must start with '# {profile_display_name}'.")
     for section_name in SECTION_NAMES:
         if f"## {section_name}" not in lines:
             errors.append(f"'{file_name}' is missing the '## {section_name}' heading.")
@@ -122,36 +124,52 @@ def validate_file(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate generated resume files.")
     parser.add_argument(
+        "--profile",
+        type=Path,
+        default=DEFAULT_PROFILE_DIRECTORY,
+        help="Private profile directory (default: profiles/local).",
+    )
+    parser.add_argument(
         "--directory",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "career" / "files" / "md",
+        default=None,
         help="Directory containing generated Markdown resumes (default: career/files/md).",
     )
     parser.add_argument(
         "--skeleton",
         type=Path,
-        default=Path(__file__).resolve().parents[1] / "career" / "resumeSkeleton.md",
-        help="Authoritative skeleton used to calculate experience.",
+        default=None,
+        help="Authoritative skeleton used to calculate experience (default: selected profile).",
     )
     parser.add_argument(
         "--pdf-directory",
         type=Path,
-        default=DEFAULT_PDF_DIRECTORY,
+        default=None,
         help="Directory containing matching PDF resumes (default: career/files/pdf).",
     )
     parser.add_argument(
         "--formatting-config",
         type=Path,
-        default=DEFAULT_FORMATTING_CONFIG,
+        default=None,
         help="Cosmetic formatting configuration file.",
     )
     args = parser.parse_args()
+    try:
+        profile = load_profile(args.profile)
+    except ValueError as exc:
+        print(f"Formatting configuration failed: {exc}")
+        return 1
 
-    resume_files = collect_resume_files(args.directory)
+    markdown_directory = args.directory or profile.output_root / "md"
+    skeleton = args.skeleton or profile.skeleton
+    pdf_directory = args.pdf_directory or profile.output_root / "pdf"
+    formatting_config = args.formatting_config or profile.formatting_config
+
+    resume_files = collect_resume_files(markdown_directory)
     pdf_files = {
-        path.name for path in args.pdf_directory.iterdir()
+        path.name for path in pdf_directory.iterdir()
         if path.is_file() and path.suffix.lower() == ".pdf"
-    } if args.pdf_directory.exists() else set()
+    } if pdf_directory.exists() else set()
 
     if not resume_files:
         if pdf_files:
@@ -159,19 +177,19 @@ def main() -> int:
             for pdf_file in sorted(pdf_files):
                 print(f"- Unexpected PDF '{pdf_file}' has no matching Markdown resume.")
             return 1
-        print(f"No generated resumes found in {args.directory}. Validation passed (empty output directory).")
+        print(f"No generated resumes found in {markdown_directory}. Validation passed (empty output directory).")
         return 0
 
-    expected_experience_years = experience_years(args.skeleton)
+    expected_experience_years = experience_years(skeleton)
     try:
-        settings = load_formatting_settings(args.formatting_config)
+        settings = load_formatting_settings(formatting_config)
     except ValueError as exc:
         print(f"Formatting configuration failed: {exc}")
         return 1
     all_errors: list[str] = []
     for file_path in resume_files:
-        all_errors.extend(validate_file(file_path, expected_experience_years, settings))
-        all_errors.extend(validate_pdf(args.pdf_directory / f"{file_path.stem}.pdf"))
+        all_errors.extend(validate_file(file_path, expected_experience_years, settings, profile.filename_name, profile.name))
+        all_errors.extend(validate_pdf(pdf_directory / f"{file_path.stem}.pdf"))
 
     expected_pdf_files = {f"{file_path.stem}.pdf" for file_path in resume_files}
     for unexpected_pdf in sorted(pdf_files - expected_pdf_files):
@@ -183,7 +201,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print(f"Validated {len(resume_files)} resume file(s) in {args.directory}.")
+    print(f"Validated {len(resume_files)} resume file(s) in {markdown_directory}.")
     return 0
 
 

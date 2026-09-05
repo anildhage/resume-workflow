@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+from profile import DEFAULT_PROFILE_DIRECTORY
+
 DATE_RANGE_RE = re.compile(r"\|\s*(\d{2}/\d{4})\s*-\s*(Present|\d{2}/\d{4})\s*$")
 MONTH_RE = re.compile(r"^(\d{2})/(\d{4})$")
 EXCLUDED_EMPLOYERS = {"Professional Career Development"}
@@ -94,10 +96,12 @@ def experience_years(skeleton_path: Path, as_of: date | None = None) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Calculate experience from resumeSkeleton.md.")
-    parser.add_argument("--skeleton", type=Path, default=Path(__file__).resolve().parents[1] / "career" / "resumeSkeleton.md")
+    parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE_DIRECTORY, help="Private profile directory.")
+    parser.add_argument("--skeleton", type=Path, help="Override the profile skeleton path.")
     parser.add_argument("--as-of", type=lambda value: date.fromisoformat(value), help="Reference date in YYYY-MM-DD format.")
     args = parser.parse_args()
-    years = experience_years(args.skeleton, args.as_of)
+    skeleton = args.skeleton or args.profile / "resumeSkeleton.md"
+    years = experience_years(skeleton, args.as_of)
     print(f"{years}+ years of experience")
     return 0
 

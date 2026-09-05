@@ -44,6 +44,7 @@ Use the agent workflow described in the root README, or test the writer manually
 
 ```powershell
 .venv\Scripts\python.exe scripts\write_resume.py `
+  --profile profiles/local `
   --role "Data Scientist" `
   --content "<generated Markdown draft>"
 ```
@@ -51,7 +52,7 @@ Use the agent workflow described in the root README, or test the writer manually
 Then validate:
 
 ```powershell
-.venv\Scripts\python.exe scripts\validate_resume.py
+.venv\Scripts\python.exe scripts\validate_resume.py --profile profiles/local
 ```
 
 ## VS Code

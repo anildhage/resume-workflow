@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from generate_resume_filename import normalize_role_name, next_resume_index
+from profile import DEFAULT_PROFILE_DIRECTORY, Profile, load_profile
 
 # Formatting plug-in switch: edit resumeFormatting.yml to control the final cosmetic pass.
 DEFAULT_FORMATTING_CONFIG = Path(__file__).resolve().parents[1] / "career" / "resumeFormatting.yml"
@@ -193,7 +194,7 @@ def apply_formatting_settings(lines: list[str], settings: FormattingSettings) ->
     return lines
 
 
-def normalize_resume_format(content: str, settings: FormattingSettings) -> str:
+def normalize_resume_format(content: str, settings: FormattingSettings, profile: Profile) -> str:
     """Apply presentation formatting after the content-quality gate passes."""
     if not settings.evidence_bolding:
         content = remove_inline_bolding(content)
@@ -205,7 +206,7 @@ def normalize_resume_format(content: str, settings: FormattingSettings) -> str:
         (
             index
             for index, line in enumerate(lines)
-            if re.sub(r"[#*\s]", "", line) == "AnilDhage"
+            if re.sub(r"[#*\s]", "", line).lower() == re.sub(r"[\s]", "", profile.name).lower()
         ),
         None,
     )
@@ -215,8 +216,8 @@ def normalize_resume_format(content: str, settings: FormattingSettings) -> str:
             name_index + 1,
         )
         lines = lines[:name_index] + [
-            "# Anil Dhage  ",
-            "Montreal, Quebec  |  +1 514 235 8388  |  i.am.dhage@gmail.com  |  linkedin.com/in/anil-dhage",
+            f"# {profile.name}  ",
+            f"{profile.location}  |  {profile.phone}  |  {profile.email}  |  {profile.linkedin}",
             "---",
         ] + lines[header_end:]
 
@@ -268,12 +269,13 @@ def validate_content(content: str) -> list[str]:
     return errors
 
 
-def validate_presentation(content: str, settings: FormattingSettings) -> list[str]:
+def validate_presentation(content: str, settings: FormattingSettings, profile: Profile) -> list[str]:
     """Validate the final presentation after cosmetic formatting."""
     lines = content.splitlines()
     errors: list[str] = []
-    if not lines or lines[0].strip() != "# Anil Dhage":
-        errors.append("Formatted resume must start with '# Anil Dhage'.")
+    expected_header = f"# {profile.name}"
+    if not lines or lines[0].strip() != expected_header:
+        errors.append(f"Formatted resume must start with '{expected_header}'.")
     for name in SECTION_NAMES:
         if f"## {name}" not in lines:
             errors.append(f"Formatted resume is missing the '## {name}' heading.")
@@ -306,28 +308,25 @@ def validate_presentation(content: str, settings: FormattingSettings) -> list[st
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate a resume file name and save the file only after validation passes.")
     parser.add_argument("--role", required=True, help="Target role, for example 'Data and AI Engineer'.")
+    parser.add_argument(
+        "--profile",
+        type=Path,
+        default=DEFAULT_PROFILE_DIRECTORY,
+        help="Private profile directory (default: profiles/local).",
+    )
     parser.add_argument("--content", help="Resume markdown content to write. If omitted, reads from stdin.")
     parser.add_argument("--formatting-config", type=Path, default=DEFAULT_FORMATTING_CONFIG)
     parser.add_argument("--bolding", choices=("yes", "no"), help="Override evidence_bolding for this generation.")
-    parser.add_argument(
-        "--directory",
-        type=Path,
-        default=DEFAULT_MARKDOWN_DIRECTORY,
-        help="Directory where validated Markdown resumes are saved.",
-    )
-    parser.add_argument(
-        "--pdf-directory",
-        type=Path,
-        default=DEFAULT_PDF_DIRECTORY,
-        help="Directory where rendered PDF resumes are saved.",
-    )
-    parser.add_argument(
-        "--css",
-        type=Path,
-        default=Path(__file__).resolve().parents[1] / "career" / "resume.css",
-        help="CSS stylesheet used for PDF rendering.",
-    )
+    parser.add_argument("--directory", type=Path, help="Override the Markdown output directory.")
+    parser.add_argument("--pdf-directory", type=Path, help="Override the PDF output directory.")
+    parser.add_argument("--css", type=Path, help="Override the CSS stylesheet used for PDF rendering.")
     args = parser.parse_args()
+
+    try:
+        profile = load_profile(args.profile)
+    except ValueError as exc:
+        print(f"Error: {exc}")
+        return 1
 
     try:
         role_name = normalize_role_name(args.role)
@@ -351,20 +350,22 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    formatted_content = normalize_resume_format(content, settings)
-    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content, settings)
+    formatted_content = normalize_resume_format(content, settings, profile)
+    presentation_errors = validate_content(formatted_content) + validate_presentation(formatted_content, settings, profile)
     if presentation_errors:
         print("Final presentation validation failed:")
         for error in presentation_errors:
             print(f"- {error}")
         return 1
 
-    output_dir = args.directory
+    output_dir = args.directory or profile.output_root / "md"
+    pdf_directory = args.pdf_directory or profile.output_root / "pdf"
+    css_path = args.css or profile.css
     output_dir.mkdir(parents=True, exist_ok=True)
-    index = next_resume_index(output_dir)
-    filename = f"{role_name}-AnilDhage-{index}.md"
+    index = next_resume_index(output_dir, profile.filename_name)
+    filename = f"{role_name}-{profile.filename_name}-{index}.md"
     target = output_dir / filename
-    pdf_target = args.pdf_directory / f"{target.stem}.pdf"
+    pdf_target = pdf_directory / f"{target.stem}.pdf"
 
     if target.exists() or pdf_target.exists():
         print(f"Error: output for '{target.stem}' already exists. Choose a new role or clean the output directories.")
@@ -375,7 +376,7 @@ def main() -> int:
     try:
         from render_resume import render_resume
 
-        render_resume(target, temporary_pdf, args.css, settings.pdf)
+        render_resume(target, temporary_pdf, css_path, settings.pdf)
         temporary_pdf.replace(pdf_target)
     except Exception as exc:
         target.unlink(missing_ok=True)

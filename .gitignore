@@ -16,6 +16,20 @@ env/
 # Generated resume output
 /career/files/
 
+# Private resume profiles. Public starter files live under /templates.
+/profiles/*
+!/profiles/
+!/profiles/README.md
+
+# Personal source files from the original single-profile layout.
+/career/resumeSkeleton.md
+/career/profileFacts.md
+/career/targetResume.md
+/career/careerSummary/
+/career/projects/
+/career/firstPersonVoice/
+/career/skills/
+
 # macOS and editor metadata
 .DS_Store
 *.command
