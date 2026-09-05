@@ -29,11 +29,14 @@ def next_resume_index(directory: Path) -> int:
     if not directory.exists():
         return 1
 
-    existing = [
-        p for p in directory.iterdir()
-        if p.is_file() and p.suffix.lower() == ".md" and re.fullmatch(r"^[A-Za-z0-9]+-AnilDhage-\d+\.md$", p.name)
+    indexes = [
+        int(match.group(1))
+        for path in directory.iterdir()
+        if path.is_file()
+        and path.suffix.lower() == ".md"
+        and (match := re.fullmatch(r"^[A-Za-z0-9]+-AnilDhage-(\d+)\.md$", path.name))
     ]
-    return len(existing) + 1
+    return max(indexes, default=0) + 1
 
 
 def main() -> int:

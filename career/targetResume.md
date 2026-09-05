@@ -10,7 +10,7 @@ The generated resume must remain accurate to my experience, relevant to the targ
 
 ## Output isolation
 
-`notes/career/files/` is a write-only output directory during target-resume creation. Never read, list, search, index, enter, or scan it, and never use an existing generated resume as source material. All drafting, source selection, experience calculations, and content or formatting decisions must use approved files outside this directory. The save operation writes validated Markdown to `notes/career/files/md/`, then renders the matching PDF to `notes/career/files/pdf/`.
+`career/files/` is a write-only output directory during target-resume creation. Never read, list, search, index, enter, or scan it, and never use an existing generated resume as source material. All drafting, source selection, experience calculations, and content or formatting decisions must use approved files outside this directory. The save operation writes validated Markdown to `career/files/md/`, then renders the matching PDF to `career/files/pdf/`.
 
 ## Generation sequence
 
@@ -66,13 +66,13 @@ The resume-generation process receives a target role, for example:
 
 The target role determines which career summary, skills, work-experience bullets, and projects are selected. The process must not invent employers, dates, technologies, responsibilities, achievements, metrics, or qualifications that are not supported by the source files.
 
-Before generating a resume, also read `notes/career/profileFacts.md` for stable cross-role positioning. Treat `notes/career/resumeSkeleton.md` as the sole authority for fixed personal facts and dated work history.
+Before generating a resume, also read `career/profileFacts.md` for stable cross-role positioning. Treat `career/resumeSkeleton.md` as the sole authority for fixed personal facts and dated work history.
 
 ## Resume skeleton
 
 Always begin with the file:
 
-`notes/career/resumeSkeleton.md`
+`career/resumeSkeleton.md`
 
 The skeleton contains the constant information that must remain unchanged in every generated resume. Copy the following constant sections exactly as they appear in the skeleton:
 
@@ -96,13 +96,13 @@ Replace only the relevant placeholders. Do not leave placeholder text in the gen
 
 For the `CAREER SUMMARY` placeholder, read the files in:
 
-`notes/career/careerSummary/`
+`career/careerSummary/`
 
 Do not copy a single summary file verbatim into the resume. Instead, treat the summary folder as a knowledge base and synthesize a role-specific summary based on the target role, the overall pattern across the available summary files, and the actual evidence in the project and first-person source material.
 
 Use the existing summary files as reference material to understand the common themes, strengths, and phrasing patterns for the target role. Then generate a concise, role-tailored summary for the resume that is grounded in your actual experience and aligned to the job being targeted.
 
-If a summary file for the exact target role already exists, use it as context and guidance, not as a direct copy. If no suitable summary exists for the target role, create a new summary file in `notes/career/careerSummary/` using the same professional style and then use that new summary as the basis for the generated resume.
+If a summary file for the exact target role already exists, use it as context and guidance, not as a direct copy. If no suitable summary exists for the target role, create a new summary file in `career/careerSummary/` using the same professional style and then use that new summary as the basis for the generated resume.
 
 Available summaries currently include:
 
@@ -112,13 +112,13 @@ Available summaries currently include:
 - `dataAndAIEngineer.md`
 - `financeProductionSupportAnalyst.md`
 
-Calculate the experience statement from the dated professional roles in `notes/career/resumeSkeleton.md` using the current date. Use the resulting floor in the format `{calculated years}+ years of experience`. Do not copy an old experience number from another generated resume or summary file. The validator is authoritative if a generated resume and a summary file disagree.
+Calculate the experience statement from the dated professional roles in `career/resumeSkeleton.md` using the current date. Use the resulting floor in the format `{calculated years}+ years of experience`. Do not copy an old experience number from another generated resume or summary file. The validator is authoritative if a generated resume and a summary file disagree.
 
 ### Skills
 
 For the `SKILLS` placeholder, read:
 
-`notes/career/skills/skills.md`
+`career/skills/skills.md`
 
 Select the skills that best match the target role and the requirements of the opportunity. Preserve the category structure from the skills file where practical. Prioritize relevant categories and skills rather than copying unrelated skills into every resume.
 
@@ -155,9 +155,9 @@ For the placeholder under:
 
 read and synthesize information from all three locations below:
 
-- `notes/career/projects/`
-- `notes/career/skills/`
-- `notes/career/firstPersonVoice/`
+- `career/projects/`
+- `career/skills/`
+- `career/firstPersonVoice/`
 
 Use these sources to create strong, role-specific resume bullets describing what I did at Société Générale. Select the details that are most relevant to the target role.
 
@@ -177,7 +177,7 @@ Do not duplicate the same bullet with minor wording changes. Prefer a focused se
 
 For the `PROJECTS` placeholder, read the files in:
 
-`notes/career/projects/`
+`career/projects/`
 
 Select the projects most relevant to the target role. Include the project name, organization, period, and concise achievement-focused details supported by the project file. Do not include projects that are unrelated when space or relevance is limited.
 
@@ -206,11 +206,11 @@ Project descriptions should explain the problem or purpose, what I built or co-d
 
 Create every generated resume as a new `.md` file inside:
 
-`notes/career/files/md/`
+`career/files/md/`
 
 Then create the matching styled PDF inside:
 
-`notes/career/files/pdf/`
+`career/files/pdf/`
 
 Use this exact filename pattern:
 
@@ -223,20 +223,20 @@ For this profile, use `AnilDhage` for `FirstLastName`. Convert the target role i
 - `DataAndAIEngineer-AnilDhage-3.md`
 - `FinanceProductionSupportAnalyst-AnilDhage-4.md`
 
-Do not manually inspect or count files in `notes/career/files/md/` or `notes/career/files/pdf/`. Let `scripts/write_resume.py` perform the minimal uniqueness check and assign the next increment number during the final save. Do not reuse an existing filename or overwrite an existing resume. If files have gaps in their numbers, the save script still uses the count plus one, as specified by this rule.
+Do not manually inspect or count files in `career/files/md/` or `career/files/pdf/`. Let `scripts/write_resume.py` perform the minimal uniqueness check and assign the next unused increment number during the final save. Do not reuse an existing filename or overwrite an existing resume.
 
 ## Final checks before writing
 
 Before saving a generated resume, confirm that:
 
-1. It was based on `notes/career/resumeSkeleton.md`.
+1. It was based on `career/resumeSkeleton.md`.
 2. Constant skeleton information was preserved.
 3. All dynamic placeholders were replaced.
-4. The career summary came from `notes/career/careerSummary/`.
-5. The skills came from `notes/career/skills/skills.md`.
+4. The career summary came from `career/careerSummary/`.
+5. The skills came from `career/skills/skills.md`.
 6. Société Générale bullets were grounded in `projects/`, `skills/`, and `firstPersonVoice/`.
-7. Projects came from `notes/career/projects/`.
+7. Projects came from `career/projects/`.
 8. The experience claim matches the value calculated from the dated professional roles in `resumeSkeleton.md`.
 9. The Markdown output uses the required filename pattern and the PDF uses the same filename stem.
-10. Both outputs are new files in `notes/career/files/md/` and `notes/career/files/pdf/` and do not overwrite another file.
+10. Both outputs are new files in `career/files/md/` and `career/files/pdf/` and do not overwrite another file.
 11. The matching PDF exists and is a valid PDF before delivery.

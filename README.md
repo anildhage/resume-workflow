@@ -85,7 +85,7 @@ After the content gate passes, bold important target-role keywords in the summar
 
 ### Cosmetic mode switch
 
-Set the switches in `career/resumeFormatting.yml`. `evidence_bolding: true` enables the cosmetic plug-in; `false` produces a clean resume with only Markdown headings. The category switches control keyword, supporting-action, employer, title, and project emphasis. Override the master setting for one run with `python3 scripts/write_resume.py --role "Business Analyst" --bolding yes` or `--bolding no`.
+Set the switches in `career/resumeFormatting.yml`. `evidence_bolding: true` enables the cosmetic plug-in; `false` produces a clean resume with only Markdown headings. The category switches control keyword, supporting-action, employer, title, and project emphasis. Override the master setting for one run with `.venv/bin/python scripts/write_resume.py --role "Business Analyst" --bolding yes` or `--bolding no`.
 
 ## Non-negotiable rules
 
@@ -116,9 +116,30 @@ The same `career/resumeFormatting.yml` file contains a separate `pdf:` section f
 
 Set `pdf.keep_work_entries_together: true` to keep each organization, role/date line, and bullet list together when it fits on one page. The renderer also adds PDF-only structure for correct headings, lists, and page breaks; the source Markdown remains unchanged.
 
+### Regenerate One PDF
+
+To regenerate a PDF after editing an existing Markdown resume, edit `career/pdfBuild.yml`:
+
+```yaml
+pdf_build:
+	markdown_file: NetworkGrowthAnalyst-AnilDhage-1.md
+	pdf_file: NetworkGrowthAnalyst-AnilDhage-1.pdf
+	overwrite: false
+```
+
+Then run:
+
+```bash
+./build-pdf.command
+```
+
+Run `.venv/bin/python scripts/validate_resume.py` after editing and after regeneration. The command reads the Markdown from `career/files/md/`, writes the PDF to `career/files/pdf/`, and reuses the `pdf:` settings from `career/resumeFormatting.yml`. Existing PDFs are protected unless `overwrite: true` is set intentionally.
+
 Required pattern:
 
 `RoleName-FirstLastName-{incrementNumberBasedOnFileCountInThisFolder}.md`
+
+The writer uses the next unused numeric suffix in `career/files/md/`; the PDF uses the same filename stem.
 
 For this profile:
 

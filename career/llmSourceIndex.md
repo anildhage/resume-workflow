@@ -52,7 +52,7 @@ Never read, list, search, index, enter, or scan `files/md/` or `files/pdf/` whil
 
 1. Read `targetResume.md` first.
 2. Read `resumeSkeleton.md` second.
-3. Select only one matching career summary file.
+3. Review all career summaries for common themes, then use the relevant summary as context; never copy one summary verbatim.
 4. Select relevant skills from `skills/skills.md` only.
 5. Build SG bullets from project and first-person evidence only.
 6. Never invent unsupported claims.

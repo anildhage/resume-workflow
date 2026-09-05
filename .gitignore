@@ -18,4 +18,5 @@ env/
 
 # macOS and editor metadata
 .DS_Store
+*.command
 .vscode/*.log

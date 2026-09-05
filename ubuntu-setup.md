@@ -158,6 +158,19 @@ Validation checks include:
 
 A resume build is complete only when this validation succeeds.
 
+## Regenerate One PDF
+
+After editing an existing Markdown resume, update `career/pdfBuild.yml` with the Markdown and PDF filenames, then run:
+
+```bash
+chmod +x build-pdf.command
+./build-pdf.command
+```
+
+The command reuses the PDF settings in `career/resumeFormatting.yml`. It refuses to replace an existing PDF unless `overwrite: true` is set in `career/pdfBuild.yml`.
+
+Run `.venv/bin/python scripts/validate_resume.py` after editing and after regeneration to confirm the Markdown/PDF pair is valid.
+
 ## PDF Appearance
 
 PDF styling is defined in `career/resume.css`. The renderer uses standard Markdown conversion, so Markdown such as:

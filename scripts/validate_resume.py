@@ -18,7 +18,7 @@ from pathlib import Path
 from calculate_experience import experience_years
 from write_resume import DEFAULT_FORMATTING_CONFIG, FormattingSettings, load_formatting_settings
 
-DEFAULT_PATTERN = re.compile(r"^[A-Za-z]+-AnilDhage-\d+\.md$")
+DEFAULT_PATTERN = re.compile(r"^[A-Za-z0-9]+-AnilDhage-\d+\.md$")
 DEFAULT_PDF_DIRECTORY = Path(__file__).resolve().parents[1] / "career" / "files" / "pdf"
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 EXPERIENCE_RE = re.compile(r"\b(\d+)\+ years of experience\b")
@@ -148,8 +148,17 @@ def main() -> int:
     args = parser.parse_args()
 
     resume_files = collect_resume_files(args.directory)
+    pdf_files = {
+        path.name for path in args.pdf_directory.iterdir()
+        if path.is_file() and path.suffix.lower() == ".pdf"
+    } if args.pdf_directory.exists() else set()
 
     if not resume_files:
+        if pdf_files:
+            print("Resume validation failed:")
+            for pdf_file in sorted(pdf_files):
+                print(f"- Unexpected PDF '{pdf_file}' has no matching Markdown resume.")
+            return 1
         print(f"No generated resumes found in {args.directory}. Validation passed (empty output directory).")
         return 0
 
@@ -164,10 +173,6 @@ def main() -> int:
         all_errors.extend(validate_file(file_path, expected_experience_years, settings))
         all_errors.extend(validate_pdf(args.pdf_directory / f"{file_path.stem}.pdf"))
 
-    pdf_files = {
-        path.name for path in args.pdf_directory.iterdir()
-        if args.pdf_directory.exists() and path.is_file() and path.suffix.lower() == ".pdf"
-    } if args.pdf_directory.exists() else set()
     expected_pdf_files = {f"{file_path.stem}.pdf" for file_path in resume_files}
     for unexpected_pdf in sorted(pdf_files - expected_pdf_files):
         all_errors.append(f"Unexpected PDF '{unexpected_pdf}' has no matching Markdown resume.")
