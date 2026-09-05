@@ -109,6 +109,30 @@ For more commands, see [docs/resume-workflow.md](docs/resume-workflow.md).
 
 See [docs/maintenance.md](docs/maintenance.md) for the update routine and [docs/repository-map.md](docs/repository-map.md) for source/output rules.
 
+## Contributing
+
+Contributions are welcome for improvements to the generator, documentation, setup instructions, and validation workflow.
+
+1. Fork the repository and create a focused branch.
+2. Make the smallest change that solves the problem.
+3. Run the relevant setup checks and `python3 -m py_compile scripts/*.py`.
+4. Run `.venv/bin/python scripts/validate_resume.py` when changing resume-generation behavior.
+5. Open a pull request describing the change and how it was tested.
+
+Do not include real phone numbers, email addresses, private employment details, employer-confidential information, generated resumes, or other personal data in an issue or pull request. Use fictional or redacted examples when demonstrating a bug.
+
+## Security and Privacy
+
+This repository handles highly sensitive personal and career information. Before publishing or contributing:
+
+- Search the complete Git history as well as the current files for secrets and personal information.
+- Keep private profiles and generated resumes out of commits.
+- Never commit API keys, passwords, access tokens, `.env` files, or private job descriptions.
+- Report a suspected secret or security issue privately through the repository's GitHub security contact instead of opening a public issue.
+
+The repository does not currently include a CI workflow, CodeQL configuration, or dependency automation. If those are added later, keep permissions minimal, avoid printing secrets, and review workflow changes like application code.
+
+
 ## Public Repository Note
 
 The scripts currently contain Anil-specific header and filename validation because this repository is currently used for Anil's profile. That is acceptable for this personal version.
