@@ -18,6 +18,7 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-05 | Public documentation | Replaced the long README with a public tutorial, organized setup and workflow guides under `docs/`, and moved Ubuntu setup documentation into `docs/ubuntu-setup.md`. | 2026-09-05 |
 | 2026-09-05 | PDF-only regeneration | Added `career/pdfBuild.yml`, `scripts/build_pdf.py`, and `build-pdf.command` for controlled PDF regeneration from an edited Markdown resume using shared PDF cosmetics and explicit overwrite protection. | 2026-09-05 |
 | 2026-09-05 | README workflow documentation | Updated the concise README contract for JD-triggered Markdown/PDF generation, `.venv` execution, PDF cosmetics, and page-break handling. | 2026-09-05 |
 | 2026-09-05 | PDF pagination | Added PDF-only work-entry grouping and `keep_work_entries_together` control so organization names, role metadata, and bullets do not split awkwardly across pages when the entry fits. | 2026-09-05 |
@@ -26,7 +27,7 @@ Use this log whenever you add or revise content in the repo so the author always
 | 2026-09-05 | PDF cosmetic plugin | Added YAML-controlled PDF presentation settings for typography, margins, colors, organization-name emphasis, and role metadata emphasis while keeping Markdown controls separate. | 2026-09-05 |
 | 2026-09-05 | PDF resume styling | Improved PDF-only hierarchy with larger section headings, bold organization names, and smaller bold role/location/date metadata without changing Markdown generation. | 2026-09-05 |
 | 2026-09-05 | Network Growth Analyst resume | Generated a validated, JD-tailored Markdown resume and matching styled PDF emphasizing SQL analysis, metric definition, hypothesis testing, financial modeling, data quality, and cross-functional recommendations. | 2026-09-05 |
-| 2026-09-05 | Ubuntu setup documentation | Added `ubuntu-setup.md` with system packages, virtual-environment setup, verification, JD-driven resume generation, PDF output, validation, and troubleshooting instructions. | 2026-09-05 |
+| 2026-09-05 | Ubuntu setup documentation | Added `docs/ubuntu-setup.md` with system packages, virtual-environment setup, verification, JD-driven resume generation, PDF output, validation, and troubleshooting instructions. | 2026-09-05 |
 | 2026-09-05 | Resume build contract | Audited the full workflow, required matching Markdown/PDF outputs, made PDF validation mandatory, cleaned up partial outputs on conversion failure, and configured VS Code to use `.venv`. | 2026-09-05 |
 | 2026-09-05 | Job-description resume workflow | Clarified that a user-provided JD starts the complete agent workflow and produces validated Markdown followed by the matching PDF without requiring manual script inputs. | 2026-09-05 |
 | 2026-09-04 | Markdown and PDF output workflow | Added a virtual-environment-based pipeline that validates and saves Markdown under `career/files/md/`, then renders the matching styled PDF under `career/files/pdf/`. | 2026-09-04 |
