@@ -38,6 +38,9 @@ pdf:
 	# true: make title, location, employment type, and dates bold in the PDF.
 	# false: render that role metadata at normal weight.
 	bold_role_metadata: true
+	# true: keep each organization, role metadata, and bullet list together on one page when it fits.
+	# false: allow a long work entry to split across pages normally.
+	keep_work_entries_together: true
 	# Base PDF font size in points. Example: 10.5 means 10.5pt body text.
 	body_font_size: 10.5
 	# Main section heading size in points, such as WORK EXPERIENCE or PROJECTS.

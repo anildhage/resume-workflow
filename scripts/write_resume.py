@@ -39,6 +39,7 @@ PDF_KEYS = {
     "bold_inline_content",
     "bold_organization_names",
     "bold_role_metadata",
+    "keep_work_entries_together",
     "body_font_size",
     "section_heading_size",
     "organization_name_size",
@@ -71,6 +72,7 @@ class PdfSettings:
     bold_inline_content: bool = True
     bold_organization_names: bool = True
     bold_role_metadata: bool = True
+    keep_work_entries_together: bool = True
     body_font_size: float = 10.5
     section_heading_size: float = 12.5
     organization_name_size: float = 11.5

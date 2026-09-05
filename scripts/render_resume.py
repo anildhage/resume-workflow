@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from xml.etree.ElementTree import Element
 
 import markdown
 from markdown.treeprocessors import Treeprocessor
@@ -24,16 +25,28 @@ class ResumeStructureTreeprocessor(Treeprocessor):
                 (index for index in range(section_index + 1, len(children)) if children[index].tag == "h2"),
                 len(children),
             )
-            section_children = children[section_index + 1 : section_end]
-            for child_index, child in enumerate(section_children):
-                if child.tag != "ul":
+            index = section_index + 1
+            while index < section_end - 2:
+                organization, role_meta, bullets = children[index : index + 3]
+                if not (
+                    organization.tag == "p"
+                    and role_meta.tag == "p"
+                    and bullets.tag == "ul"
+                ):
+                    index += 1
                     continue
-                role_index = child_index - 1
-                organization_index = child_index - 2
-                if role_index >= 0 and section_children[role_index].tag == "p":
-                    section_children[role_index].set("class", "role-meta")
-                if organization_index >= 0 and section_children[organization_index].tag == "p":
-                    section_children[organization_index].set("class", "organization")
+
+                organization.set("class", "organization")
+                role_meta.set("class", "role-meta")
+                entry = Element("div", {"class": "experience-entry"})
+                root.remove(organization)
+                root.remove(role_meta)
+                root.remove(bullets)
+                entry.extend([organization, role_meta, bullets])
+                root.insert(index, entry)
+                children = list(root)
+                section_end -= 2
+                index += 1
 
 
 class ResumeStructureExtension(Extension):
@@ -83,6 +96,7 @@ def pdf_settings_css(settings) -> str:
         organization_weight = "700" if settings.bold_organization_names else "400"
         role_weight = "700" if settings.bold_role_metadata else "400"
         inline_weight = "700" if settings.bold_inline_content else "400"
+        entry_break = "avoid" if settings.keep_work_entries_together else "auto"
         return f"""
 @page {{
     margin: {settings.page_margin};
@@ -107,6 +121,11 @@ h2 {{
 .role-meta {{
     font-size: {settings.role_metadata_size}pt;
     font-weight: {role_weight};
+}}
+
+.experience-entry {{
+    break-inside: {entry_break};
+    page-break-inside: {entry_break};
 }}
 
 strong {{

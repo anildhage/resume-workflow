@@ -4,7 +4,7 @@ This repository is designed to support a local LLM or agent that generates role-
 
 ## Objective
 
-The agent should read the target role, select the most relevant source files, and generate a new Markdown resume that remains grounded in verified career facts and does not invent details.
+The agent should read the job description or target role, select the most relevant source files, and generate a validated Markdown resume plus matching PDF grounded in verified career facts.
 
 ## Repository purpose
 
@@ -63,7 +63,7 @@ When a job description is provided, the user-facing action is simply to ask for 
 10. Apply final Markdown headings and spacing only after the content gate passes, then apply strategic keyword and supporting-evidence bolding as the final cosmetic pass.
 11. Save a new Markdown resume in `career/files/md/` using the required filename pattern. Do not inspect the output directory for source material during this process.
 12. After the validated Markdown file is written, render its PDF counterpart into `career/files/pdf/`.
-13. Run `python3 scripts/validate_resume.py` before delivering the resume.
+13. Run `.venv/bin/python scripts/validate_resume.py` before delivering the resume.
 
 ### Resume formatting
 
@@ -114,6 +114,8 @@ The writer completes Markdown content and presentation validation before startin
 
 The same `career/resumeFormatting.yml` file contains a separate `pdf:` section for PDF-only presentation controls. These settings do not change Markdown generation. They control PDF enablement, inline Markdown emphasis, organization-name emphasis, role/location/date emphasis, heading sizes, body size, margins, and colors. The renderer applies them as overrides to `career/resume.css`.
 
+Set `pdf.keep_work_entries_together: true` to keep each organization, role/date line, and bullet list together when it fits on one page. The renderer also adds PDF-only structure for correct headings, lists, and page breaks; the source Markdown remains unchanged.
+
 Required pattern:
 
 `RoleName-FirstLastName-{incrementNumberBasedOnFileCountInThisFolder}.md`
@@ -145,6 +147,7 @@ Before writing the file, the model must confirm:
 11. Content quality was checked before cosmetic formatting was applied.
 12. Final formatting did not introduce placeholders or alter fixed facts.
 13. Final cosmetic formatting includes keyword emphasis and supporting evidence emphasis in work experience and projects.
+14. PDF rendering keeps work entries together when the PDF setting is enabled.
 
 ## Determinism guidance
 

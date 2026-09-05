@@ -18,6 +18,8 @@ Use this log whenever you add or revise content in the repo so the author always
 
 | Date | Area updated | Summary | Last refresh |
 |---|---|---|---|
+| 2026-09-05 | README workflow documentation | Updated the concise README contract for JD-triggered Markdown/PDF generation, `.venv` execution, PDF cosmetics, and page-break handling. | 2026-09-05 |
+| 2026-09-05 | PDF pagination | Added PDF-only work-entry grouping and `keep_work_entries_together` control so organization names, role metadata, and bullets do not split awkwardly across pages when the entry fits. | 2026-09-05 |
 | 2026-09-05 | Resume formatting configuration | Expanded `resumeFormatting.yml` comments to document every Markdown and PDF cosmetic control, switch behavior, units, and color formats without changing configuration values. | 2026-09-05 |
 | 2026-09-05 | PDF cosmetic controls | Added independent PDF control for inline bold content while retaining separate organization-name and role-metadata emphasis switches. | 2026-09-05 |
 | 2026-09-05 | PDF cosmetic plugin | Added YAML-controlled PDF presentation settings for typography, margins, colors, organization-name emphasis, and role metadata emphasis while keeping Markdown controls separate. | 2026-09-05 |
