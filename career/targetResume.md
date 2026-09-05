@@ -12,8 +12,9 @@ Follow this order for every resume:
 
 1. Build the content draft from the target role, the fixed skeleton, and verified career evidence.
 2. Perform a content-quality review before applying Markdown formatting or keyword emphasis.
-3. Apply the final resume structure, heading levels, bolding, spacing, and other presentation rules.
-4. Run the final structural and placeholder validation after formatting.
+3. Apply the final resume structure, heading levels, spacing, and other presentation rules.
+4. As the final presentation pass, apply strategic bolding to supported employer names, job titles, project names, and high-value target-role terms.
+5. Run the final structural, placeholder, and bolding validation after all formatting is complete.
 
 Formatting is the last presentation stage. It must never be used to hide missing content, unsupported claims, weak evidence, or unresolved placeholders.
 
@@ -30,6 +31,16 @@ Before any cosmetic formatting, confirm that the content draft:
 - has complete `CAREER SUMMARY`, `SKILLS`, `WORK EXPERIENCE`, `EDUCATION`, `CERTIFICATIONS`, and `PROJECTS` content
 
 Only after all checks pass may the draft receive heading levels, bolding, spacing, or other cosmetic treatment.
+
+### Final cosmetic formatting gate
+
+Treat bolding as a required final step, never as part of content drafting. After the content-quality gate passes:
+
+- Bold employer names, job titles, and project names.
+- Bold approximately 10-30 strategically selected terms that directly match the target role and are supported by the source files.
+- Prioritize terms such as SQL, data mapping, data quality, ETL, technical specifications, UAT, Python, Azure SQL, Airflow, and regulatory reporting when they appear naturally.
+- Do not bold unsupported job requirements, entire bullet sentences, section headings, or the candidate name.
+- Run the validator only after this cosmetic pass; a resume with fewer than 10 or more than 30 bold spans is incomplete or overformatted and must be revised.
 
 ## Inputs
 

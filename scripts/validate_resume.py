@@ -4,6 +4,7 @@
 Rules enforced:
 - filename must match: RoleName-AnilDhage-{N}.md
 - placeholder text '- to be updated' must not appear
+- final resume must contain a readable amount of strategic Markdown bolding
 - output directory may be empty, but if files exist they must conform
 """
 
@@ -19,6 +20,7 @@ from calculate_experience import experience_years
 DEFAULT_PATTERN = re.compile(r"^[A-Za-z]+-AnilDhage-\d+\.md$")
 PLACEHOLDER_RE = re.compile(r"(?i)-\s*to be updated")
 EXPERIENCE_RE = re.compile(r"\b(\d+)\+ years of experience\b")
+BOLD_RE = re.compile(r"\*\*([^*\n]+)\*\*")
 SECTION_NAMES = (
     "CAREER SUMMARY",
     "SKILLS",
@@ -70,6 +72,13 @@ def validate_file(file_path: Path, expected_experience_years: int) -> list[str]:
         errors.append(
             f"Experience statement in '{file_name}' does not match the skeleton-derived value of "
             f"'{expected_experience_years}+ years of experience'."
+        )
+
+    bold_spans = BOLD_RE.findall(content)
+    if len(bold_spans) < 10 or len(bold_spans) > 30:
+        errors.append(
+            f"'{file_name}' contains {len(bold_spans)} bold spans. "
+            "Final formatting must contain between 10 and 30 strategic bold spans."
         )
 
     return errors
