@@ -10,9 +10,11 @@ From the repository root, run:
 python3 scripts/init_profile.py
 ```
 
+This creates `profiles/anil/` and copies the starter templates into it. Do not force-add this directory to Git.
 This creates `profiles/local/` and copies the starter templates into it. Do not force-add this directory to Git.
 
 ## 1. Replace the Resume Skeleton
+Edit `profiles/anil/resumeSkeleton.md` first. Replace:
 
 Edit `profiles/local/resumeSkeleton.md` first. Replace:
 
@@ -23,17 +25,23 @@ Edit `profiles/local/resumeSkeleton.md` first. Replace:
 - certifications
 
 Keep the section names and overall structure. The experience calculator reads dated work entries from this file.
+Edit `profiles/anil/profileFacts.md` with your stable professional identity, strengths, and recurring capabilities. Keep this file short. Do not put every project detail here.
 
 ## 2. Replace Profile Facts
 
 Edit `profiles/local/profileFacts.md` with your stable professional identity, strengths, and recurring capabilities. Keep this file short. Do not put every project detail here.
 
 ## 3. Add Your Evidence
+- Add role summaries to `profiles/anil/careerSummary/`.
+- Add skills you have actually used to `profiles/anil/skills/skills.md`.
+- Add one concise Markdown note per substantial project to `profiles/anil/projects/`.
+- Add interview-ready context to `profiles/anil/firstPersonVoice/`.
 
 Use the existing folders as a simple evidence library:
 
 - Add role summaries to `profiles/local/careerSummary/`.
 - Add skills you have actually used to `profiles/local/skills/skills.md`.
+Edit `profiles/anil/targetResume.md` so its examples and wording match your profile. Replace every starter placeholder with your own values.
 - Add one concise Markdown note per substantial project to `profiles/local/projects/`.
 - Add interview-ready context to `profiles/local/firstPersonVoice/`.
 
@@ -46,12 +54,17 @@ Edit `profiles/local/targetResume.md` so its examples and wording match your pro
 The rules should say that the generator must:
 
 - preserve your fixed facts from the skeleton
+The scripts load name, contact details, filename identity, and source paths from `profiles/anil/profile.yml`. Use another profile directory with `--profile` when needed.
 - use only evidence in your source files
 - replace every placeholder
 - calculate experience from the dated skeleton roles
 - create a new Markdown file and matching PDF
 - never use a generated resume as source material
 
+Use a real job description or target role and verify that the output contains your name, your contact details, your experience claim, and your supported evidence. Do not publish generated resumes containing private information.
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
 ## 5. Check the Scripts
 
 The scripts load name, contact details, filename identity, and source paths from `profiles/local/profile.yml`. Use another profile directory with `--profile` when needed.

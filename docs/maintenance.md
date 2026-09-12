@@ -4,6 +4,12 @@ Update the repository in small, factual changes.
 
 ## When Your Career Changes
 
+- Employer, title, location, or dates: update `profiles/anil/resumeSkeleton.md`.
+- Recurring strengths: update `profiles/anil/profileFacts.md`.
+- New project: add a note under `profiles/anil/projects/`.
+- Interview story: add a note under `profiles/anil/firstPersonVoice/`.
+- New tool you have actually used: update `profiles/anil/skills/skills.md`.
+- New target role: add or update a file under `profiles/anil/careerSummary/`.
 - Employer, title, location, or dates: update `profiles/local/resumeSkeleton.md`.
 - Recurring strengths: update `profiles/local/profileFacts.md`.
 - New project: add a note under `profiles/local/projects/`.
@@ -15,6 +21,9 @@ Update the repository in small, factual changes.
 
 - Check that facts are supported.
 - Remove stale placeholders from generated content.
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
 - Keep generated output separate from source evidence.
 - Review `career/resumeFormatting.yml` before changing presentation.
 

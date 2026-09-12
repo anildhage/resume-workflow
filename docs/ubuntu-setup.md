@@ -63,7 +63,16 @@ Use the agent workflow described in the root README, or test the writer manually
 
 ```bash
 .venv/bin/python scripts/write_resume.py \
+  --profile profiles/anil \
+  --role "Data Scientist" \
+  --content "<generated Markdown draft>"
+```
+```bash
+.venv/bin/python scripts/write_resume.py \
   --profile profiles/local \
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
   --role "Data Scientist" \
   --content "<generated Markdown draft>"
 ```

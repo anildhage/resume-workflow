@@ -50,8 +50,17 @@ The empty-output validation should pass when no resumes have been generated yet.
 Use the agent workflow described in the root README, or test the writer manually with a complete Markdown draft:
 
 ```bash
+```bash
+.venv/bin/python scripts/write_resume.py \
+  --profile profiles/anil \
+  --role "Data Scientist" \
+  --content "<generated Markdown draft>"
+```
 .venv/bin/python scripts/write_resume.py \
   --profile profiles/local \
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
   --role "Data Scientist" \
   --content "<generated Markdown draft>"
 ```

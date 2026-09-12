@@ -11,6 +11,18 @@ This repository has four layers:
 
 | Need | File or folder |
 |---|---|
+| Name and contact details | `profiles/anil/profile.yml` and `profiles/anil/resumeSkeleton.md` |
+| Fixed employers, titles, dates, education, certifications | `profiles/anil/resumeSkeleton.md` |
+| Professional identity and recurring strengths | `profiles/anil/profileFacts.md` |
+| Target-role generation rules | `profiles/anil/targetResume.md` |
+| Role summaries | `profiles/anil/careerSummary/` |
+| Skills | `profiles/anil/skills/skills.md` |
+| Project evidence | `profiles/anil/projects/` |
+| Interview stories | `profiles/anil/firstPersonVoice/` |
+| Markdown/PDF appearance | `career/resumeFormatting.yml`, `career/resume.css` |
+| Maintenance history | `career/updateLog.md` |
+| Need | File or folder |
+|---|---|
 | Name and contact details | `profiles/local/profile.yml` and `profiles/local/resumeSkeleton.md` |
 | Fixed employers, titles, dates, education, certifications | `profiles/local/resumeSkeleton.md` |
 | Professional identity and recurring strengths | `profiles/local/profileFacts.md` |

@@ -312,7 +312,7 @@ def main() -> int:
         "--profile",
         type=Path,
         default=DEFAULT_PROFILE_DIRECTORY,
-        help="Private profile directory (default: profiles/local).",
+        help="Private profile directory (default: profiles/anil).",
     )
     parser.add_argument("--content", help="Resume markdown content to write. If omitted, reads from stdin.")
     parser.add_argument("--formatting-config", type=Path, default=DEFAULT_FORMATTING_CONFIG)

@@ -4,6 +4,7 @@
 
 1. Add or paste a job description to your agent workflow.
 2. Identify the target role and important requirements.
+3. Read the skeleton and approved evidence files under `profiles/anil/`.
 3. Read the skeleton and approved evidence files under `profiles/local/`.
 4. Draft a role-specific summary, skills line, work bullets, and project selection.
 5. Check factual accuracy and remove all placeholders.
@@ -17,17 +18,29 @@ The normal user-facing action is to ask an agent to create a resume from a job d
 ## Manual Test Command
 
 The writer accepts a complete Markdown draft:
+```bash
+.venv/bin/python scripts/write_resume.py \
+  --profile profiles/anil \
+  --role "Data Scientist" \
+  --content "<generated Markdown draft>"
+```
 
 ```bash
 .venv/bin/python scripts/write_resume.py \
   --profile profiles/local \
   --role "Data Scientist" \
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
   --content "<generated Markdown draft>"
 ```
 
 The draft must contain all required sections and must satisfy the profile's fixed facts and formatting rules.
 
 ## Validate Outputs
+```bash
+.venv/bin/python scripts/calculate_experience.py --profile profiles/anil
+```
 
 ```bash
 .venv/bin/python scripts/validate_resume.py --profile profiles/local

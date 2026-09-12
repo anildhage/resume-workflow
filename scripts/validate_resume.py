@@ -127,7 +127,7 @@ def main() -> int:
         "--profile",
         type=Path,
         default=DEFAULT_PROFILE_DIRECTORY,
-        help="Private profile directory (default: profiles/local).",
+        help="Private profile directory (default: profiles/anil).",
     )
     parser.add_argument(
         "--directory",

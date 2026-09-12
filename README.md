@@ -120,12 +120,14 @@ Or for your custom profile:
 Then validate the generated Markdown/PDF pair with the same profile:
 
 ```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
 .venv/bin/python scripts/validate_resume.py --profile profiles/local
 ```
 
 Or for your custom profile:
 
 ```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
 .venv/bin/python scripts/validate_resume.py --profile profiles/anil
 ```
 

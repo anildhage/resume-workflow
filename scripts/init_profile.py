@@ -25,6 +25,7 @@ def main() -> int:
         "--directory",
         type=Path,
         default=DEFAULT_PROFILE_DIRECTORY,
+        help="Private profile directory to create (default: profiles/anil).",
         help="Private profile directory to create (default: profiles/local).",
     )
     args = parser.parse_args()
