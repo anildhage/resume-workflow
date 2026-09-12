@@ -78,6 +78,8 @@ For a visual map of the repository, see [docs/repository-map.md](docs/repository
 
 The intended workflow is to give your agent a job description and ask for a tailored resume. It should read the source material under `profiles/local/`, draft the resume, invoke the writer with `--profile profiles/local`, and confirm both output files.
 
+When there is a profile ready (e.g., `profiles/anil`), use that profile name with the `--profile` flag.
+
 For a manual test, provide a complete Markdown draft:
 
 ```bash
@@ -87,10 +89,44 @@ For a manual test, provide a complete Markdown draft:
   --content "<generated Markdown draft>"
 ```
 
+If you have a custom profile (e.g., `profiles/anil/`), use that instead:
+
+```bash
+.venv/bin/python scripts/write_resume.py \
+  --profile profiles/anil \
+  --role "Data Scientist" \
+  --content "<generated Markdown draft>"
+```
+
 Then validate the generated Markdown/PDF pair with the same profile:
 
 ```bash
 .venv/bin/python scripts/validate_resume.py --profile profiles/local
+```
+
+Or for your custom profile:
+
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
+```
+
+```bash
+.venv/bin/python scripts/write_resume.py \
+  --profile profiles/anil \
+  --role "Data Scientist" \
+  --content "<generated Markdown draft>"
+```
+
+Then validate the generated Markdown/PDF pair with the same profile:
+
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/local
+```
+
+Or for your custom profile:
+
+```bash
+.venv/bin/python scripts/validate_resume.py --profile profiles/anil
 ```
 
 The writer does not overwrite an existing output. The normal output filename follows this pattern:
