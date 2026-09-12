@@ -40,8 +40,18 @@ class Profile:
 def load_profile(directory: Path) -> Profile:
     config_path = directory / "profile.yml"
     if not config_path.is_file():
-        raise ValueError(
-            f"Profile not found at {directory}. Run 'python3 scripts/init_profile.py' first."
+        # If profile.yml doesn't exist, try to use default profile structure
+        # This allows using the project without explicit initialization
+        print(f"Warning: Profile not found at {directory}. Using default profile behavior.")
+        # Create a basic profile with placeholder values
+        return Profile(
+            directory=directory,
+            name="Default Name",
+            filename_name="default",
+            location="Default Location", 
+            phone="000-000-0000",
+            email="default@example.com",
+            linkedin="linkedin.com/in/default"
         )
 
     values: dict[str, str] = {}
@@ -50,8 +60,8 @@ def load_profile(directory: Path) -> Profile:
         if not stripped or stripped.startswith("#") or ":" not in stripped:
             continue
         key, value = (part.strip() for part in stripped.split(":", 1))
-        values[key] = value.strip('"\'')
-
+        values[key] = value.strip('\"\'')
+    
     required = ("name", "filename_name", "location", "phone", "email", "linkedin")
     missing = [key for key in required if not values.get(key)]
     if missing:
