@@ -163,4 +163,5 @@ def render_resume(markdown_path: Path, pdf_path: Path, css_path: Path, pdf_setti
     HTML(string=document, base_url=str(markdown_path.parent)).write_pdf(
         str(pdf_path),
         stylesheets=[CSS(filename=str(css_path)), CSS(string=pdf_settings_css(pdf_settings))],
+        uncompressed_pdf=True,
     )
