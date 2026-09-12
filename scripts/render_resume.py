@@ -160,8 +160,18 @@ def render_resume(markdown_path: Path, pdf_path: Path, css_path: Path, pdf_setti
     document += "</body></html>"
 
     pdf_path.parent.mkdir(parents=True, exist_ok=True)
-    HTML(string=document, base_url=str(markdown_path.parent)).write_pdf(
-        str(pdf_path),
-        stylesheets=[CSS(filename=str(css_path)), CSS(string=pdf_settings_css(pdf_settings))],
-        uncompressed_pdf=True,
-    )
+    # Try to write PDF with compression disabled (if zopfli is causing issues)
+    try:
+        HTML(string=document, base_url=str(markdown_path.parent)).write_pdf(
+            str(pdf_path),
+            stylesheets=[CSS(filename=str(css_path)), CSS(string=pdf_settings_css(pdf_settings))],
+            uncompressed_pdf=True,
+        )
+    except Exception as e:
+        # If that fails due to zopfli issues, try without any special options
+        print(f"Warning: PDF compression failed with error: {e}")
+        print("Attempting to generate PDF without compression...")
+        HTML(string=document, base_url=str(markdown_path.parent)).write_pdf(
+            str(pdf_path),
+            stylesheets=[CSS(filename=str(css_path)), CSS(string=pdf_settings_css(pdf_settings))],
+        )

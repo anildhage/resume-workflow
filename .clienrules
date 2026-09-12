@@ -1,0 +1,13 @@
+# Clien rules file for resume-workflow project
+# Automatically activate virtual environment
+
+# Activate the virtual environment when entering this directory
+export VIRTUAL_ENV="/home/user/projects/resume-workflow/.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Set Python path to use virtual environment
+export PYTHONPATH="$VIRTUAL_ENV/lib/python3.14/site-packages:$PYTHONPATH"
+
+# Make sure we're using the right Python version
+alias python="python3"
+alias pip="pip3"
