@@ -2,12 +2,9 @@
 
 Build role-targeted Markdown resumes and matching PDFs from a trusted set of career facts, projects, skills, and work stories.
 
-The repository's personal resume source files are kept in a local ignored profile. A public clone contains only templates and generator code, so each user creates their own private profile before generating a resume.
-
 ## What This Repo Does
 
 The workflow:
-
 1. Reads your fixed resume facts and supporting evidence.
 2. Uses a job description or target role to select relevant content.
 3. Creates a new, validated Markdown resume.
@@ -18,184 +15,72 @@ Generated resumes are written to `career/files/md/` and `career/files/pdf/`. Tho
 
 ## Quick Start
 
-Choose the setup guide for your operating system:
-
-- [macOS setup](docs/macos-setup.md)
-- [Ubuntu setup](docs/ubuntu-setup.md)
-- [Windows setup](docs/windows-setup.md)
-
-After installation, open the repository root in VS Code or a terminal. The root is the folder containing `README.md`, `career/`, and `scripts/`.
-
-Create your private profile once:
-
+1. Create your private profile once:
 ```bash
 python3 scripts/init_profile.py
 ```
-
 This creates `profiles/local/` from the public templates. The directory is ignored by Git and must remain private.
 
-## Make It Your Own
+2. Update your profile information in `profiles/local/`:
+   - `resumeSkeleton.md` - Name, contact details, employers, education, certifications
+   - `profileFacts.md` - Professional identity and recurring strengths
+   - `targetResume.md` - Resume-generation rules
 
-Edit the files under `profiles/local/`, not the shared files under `career/`. The initializer creates starter files and empty evidence folders for you.
+3. Provide a job description in `jd.md`
 
-### 1. Fixed Resume Facts
-
-Edit `profiles/local/resumeSkeleton.md` first. Replace your:
-
-- name and contact details
-- employers, titles, locations, and employment dates
-- education
-- certifications
-
-Keep the section names and general structure. The experience calculator reads dated work entries from this file.
-
-### 2. Stable Profile Facts
-
-Edit `profiles/local/profileFacts.md` with your professional identity, recurring strengths, and capabilities. Keep it concise and avoid duplicating every project.
-
-### 3. Evidence Library
-
-Add your supporting material to the existing folders:
-
-- `profiles/local/careerSummary/` for target-role summaries
-- `profiles/local/skills/skills.md` for skills you have actually used
-- `profiles/local/projects/` for substantial projects and workstreams
-- `profiles/local/firstPersonVoice/` for interview stories and detailed context
-
-Use `career/sourceNoteTemplate.md` when creating a new evidence note. Do not add unsupported tools, metrics, responsibilities, or achievements.
-
-### 4. Generation Rules
-
-Edit `profiles/local/targetResume.md` so its examples and instructions describe your profile. Replace every placeholder in the starter files before generating a resume.
-
-### 5. Record Changes
-
-Add a short entry to `career/updateLog.md` whenever you update the shared workflow or your local profile maintenance log.
-
-For a visual map of the repository, see [docs/repository-map.md](docs/repository-map.md). For the full customization checklist, see [docs/profile-customization.md](docs/profile-customization.md).
-
-## Generate a Resume
-
-The intended workflow is to give your agent a job description and ask for a tailored resume. It should read the source material under `profiles/local/`, draft the resume, invoke the writer with `--profile profiles/local`, and confirm both output files.
-
-When there is a profile ready (e.g., `profiles/anil`), use that profile name with the `--profile` flag.
-
-For a manual test, provide a complete Markdown draft:
-
+4. Generate your tailored resume:
 ```bash
-.venv/bin/python scripts/write_resume.py \
-  --profile profiles/local \
-  --role "Data Scientist" \
-  --content "<generated Markdown draft>"
+python3 scripts/create_resume.py
 ```
 
-If you have a custom profile (e.g., `profiles/anil/`), use that instead:
+## Profile Structure
 
-```bash
-.venv/bin/python scripts/write_resume.py \
-  --profile profiles/anil \
-  --role "Data Scientist" \
-  --content "<generated Markdown draft>"
-```
+The system uses profiles/ as the source data, not files/. The key profile files are:
 
-Then validate the generated Markdown/PDF pair with the same profile:
+- `profiles/local/resumeSkeleton.md` - Fixed resume facts (name, contact, employers, education)
+- `profiles/local/profileFacts.md` - Stable profile facts (professional identity)
+- `profiles/local/targetResume.md` - Generation rules and examples
+- `profiles/local/careerSummary/` - Role-specific summaries  
+- `profiles/local/skills/skills.md` - Skills you have actually used
+- `profiles/local/projects/` - Substantial projects and workstreams
+- `profiles/local/firstPersonVoice/` - Interview stories and detailed context
 
-```bash
-.venv/bin/python scripts/validate_resume.py --profile profiles/local
-```
+## How It Works
 
-Or for your custom profile:
+1. The system reads `jd.md` to understand job requirements
+2. It analyzes your profile data in `profiles/local/`
+3. The AI-powered content generator (`generate_resume_content.py`) creates tailored resume content
+4. The validation script ensures the output meets quality standards including proper bolding requirements
+5. Final Markdown and PDF files are saved to `career/files/md/` and `career/files/pdf/`
 
-```bash
-.venv/bin/python scripts/validate_resume.py --profile profiles/anil
-```
+## Usage Examples
 
-```bash
-.venv/bin/python scripts/write_resume.py \
-  --profile profiles/anil \
-  --role "Data Scientist" \
-  --content "<generated Markdown draft>"
-```
+### For Anil's Data Analyst Resume:
+1. Place job description in `jd.md`
+2. Run `python3 scripts/create_resume.py`
+3. Find generated resume in `career/files/md/DataAnalyst-AnilDhage-*.md` and `career/files/pdf/DataAnalyst-AnilDhage-*.pdf`
 
-Then validate the generated Markdown/PDF pair with the same profile:
+### For a Different Role:
+1. Update `jd.md` with new job description
+2. Run `python3 scripts/create_resume.py`
+3. System generates resume tailored to the new requirements
 
-```bash
-.venv/bin/python scripts/validate_resume.py --profile profiles/anil
-.venv/bin/python scripts/validate_resume.py --profile profiles/local
-```
+## Customization
 
-Or for your custom profile:
+To create your own customized version:
+1. Edit files in `profiles/local/` to reflect your personal information
+2. Update `jd.md` with any job description for which you want a tailored resume
+3. Run the main script to generate your resume
 
-```bash
-.venv/bin/python scripts/validate_resume.py --profile profiles/anil
-.venv/bin/python scripts/validate_resume.py --profile profiles/anil
-```
+## Requirements
 
-The writer does not overwrite an existing output. The normal output filename follows this pattern:
-
-```text
-RoleName-FirstLastName-Number.md
-RoleName-FirstLastName-Number.pdf
-```
-
-For more commands, see [docs/resume-workflow.md](docs/resume-workflow.md).
-
-## Where to Change Things
-
-| What you want to change | Where to change it |
-|---|---|
-| Name, contact details, dates, education, certifications | `profiles/local/resumeSkeleton.md` |
-| Professional identity and recurring strengths | `profiles/local/profileFacts.md` |
-| Resume-generation rules | `profiles/local/targetResume.md` |
-| Role summaries | `profiles/local/careerSummary/` |
-| Skills | `profiles/local/skills/skills.md` |
-| Projects | `profiles/local/projects/` |
-| Interview stories | `profiles/local/firstPersonVoice/` |
-| Markdown/PDF appearance | `career/resumeFormatting.yml`, `career/resume.css` |
-| Maintenance history | `career/updateLog.md` |
-
-See [docs/maintenance.md](docs/maintenance.md) for the update routine and [docs/repository-map.md](docs/repository-map.md) for source/output rules.
-
-## Contributing
-
-Contributions are welcome for improvements to the generator, documentation, setup instructions, and validation workflow.
-
-1. Fork the repository and create a focused branch.
-2. Make the smallest change that solves the problem.
-3. Run the relevant setup checks and `python3 -m py_compile scripts/*.py`.
-4. Run `.venv/bin/python scripts/validate_resume.py --profile profiles/local` when changing resume-generation behavior.
-5. Open a pull request describing the change and how it was tested.
-
-Do not include real phone numbers, email addresses, private employment details, employer-confidential information, generated resumes, or other personal data in an issue or pull request. Use fictional or redacted examples when demonstrating a bug.
+- Python 3.7+
+- Virtual environment with dependencies (installed via requirements.txt)
+- All commands must run within the activated virtual environment (.venv) because PDF generation packages are installed there
 
 ## Security and Privacy
 
-This repository handles highly sensitive personal and career information. Before publishing or contributing:
-
-- Search the complete Git history as well as the current files for secrets and personal information.
-- Keep private profiles and generated resumes out of commits.
-- Never commit API keys, passwords, access tokens, `.env` files, or private job descriptions.
-- Report a suspected secret or security issue privately through the repository's GitHub security contact instead of opening a public issue.
-
-The repository does not currently include a CI workflow, CodeQL configuration, or dependency automation. If those are added later, keep permissions minimal, avoid printing secrets, and review workflow changes like application code.
-
-
-## Privacy Boundary
-
-Personal source material belongs under `profiles/`, which is ignored by Git. The public `templates/` directory contains safe starter files. Git ignore rules protect new local files, but files that were already tracked must be removed from the index before publishing; this repository's original personal career paths have been removed from tracking while the local data is preserved under `profiles/anil/`.
-
-Never use `git add -f` on a private profile. Before publishing, inspect the complete Git history for personal information and secrets.
-
-## Documentation
-
-- [Repository map](docs/repository-map.md)
-- [Make this repository yours](docs/profile-customization.md)
-- [Resume workflow and commands](docs/resume-workflow.md)
-- [macOS setup](docs/macos-setup.md)
-- [Ubuntu setup](docs/ubuntu-setup.md)
-- [Windows setup](docs/windows-setup.md)
-- [Maintenance guide](docs/maintenance.md)
-
-## License and Privacy
-
-Before publishing this repository, review every file for personal, employer-confidential, or proprietary information. The source evidence is more sensitive than the generator scripts and should normally remain private.
+This repository handles highly sensitive personal and career information:
+- Private profiles belong under `profiles/`, which is ignored by Git
+- Generated resumes are output only, not tracked in Git
+- Never commit real personal data, employer-confidential information, or generated resumes

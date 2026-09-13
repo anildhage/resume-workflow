@@ -3,31 +3,38 @@
 ## Overview
 Automated resume generation system that creates tailored resumes from job descriptions by matching user profiles against job requirements.
 
-## Key Components
-- `scripts/` - Main resume generation scripts  
-- `profiles/` - User profile data
-- `templates/` - Resume templates
-- `jd.md` - Job description input file
-- `.venv/` - Virtual environment (Python dependencies for PDF generation)
+## Key Files
+- `jd.md` - Job description input file (required for each resume generation)
+- `profiles/local/` - Source profile data (user's personal information and experience)
+- `scripts/create_resume.py` - Main orchestration script
 
-## Setup & Usage
-1. Create and activate virtual environment:
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+## How It Works
+1. The system reads `jd.md` to understand job requirements
+2. It loads profile data from `profiles/local/` 
+3. The AI-powered content generator creates tailored resume content
+4. The validation script ensures quality standards are met
+5. Final Markdown and PDF files are saved to `career/files/md/` and `career/files/pdf/`
 
-2. **Critical**: All commands must run within the activated virtual environment (.venv) because PDF generation packages (weasyprint, Markdown) are installed there.
+## Usage for Anil
+1. Update `jd.md` with the job description
+2. **Ensure virtual environment is activated**: `source .venv/bin/activate`
+3. Run: `python3 scripts/create_resume.py`
+4. Find generated resume in `career/files/md/DataAnalyst-AnilDhage-*.md` and `career/files/pdf/DataAnalyst-AnilDhage-*.pdf`
 
-3. **Note**: The `requirements.txt` contains dependencies like `weasyprint==66.0` and `Markdown==3.9`. These are installed once when setting up the environment.
+## Profile Structure
+The system uses `profiles/local/` as the source data, not `files/`. Key files:
+- `resumeSkeleton.md` - Name, contact details, employers, education, certifications
+- `profileFacts.md` - Professional identity and recurring strengths  
+- `targetResume.md` - Generation rules and examples
 
-## Workflow
-1. Provide job description in `jd.md`
-2. Load profile data from `profiles/` 
-3. Process and match requirements
-4. Generate customized resume with PDF output
+## Requirements
+- Python 3.7+
+- Virtual environment with dependencies (installed via requirements.txt)
+- **All commands must run within the activated virtual environment (.venv)** because PDF generation packages are installed there
 
-## Important Notes
-- All scripts must run in `.venv` environment for PDF functionality
-- `.venv` directory is in `.gitignore` (not tracked)
+## Output Location
+Generated resumes are written to:
+- `career/files/md/` - Markdown files  
+- `career/files/pdf/` - PDF files
+
+Note: The `files/` directory is only for output, not source data. Source profile information comes from `profiles/local/`.
