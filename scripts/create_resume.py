@@ -10,7 +10,7 @@ from pathlib import Path
 
 def main():
     """Main orchestration function"""
-
+    
     print("Starting resume creation process for Anil...")
     print("Analyzing job description and generating tailored resume...")
 
@@ -22,10 +22,10 @@ def main():
 
     # Extract role from job description
     jd_content = jd_path.read_text(encoding="utf-8")
-
+    
     # Simple role extraction - look for key terms in the job description
     role = "Data Analyst"  # Default role based on job description content
-
+    
     print(f"Target role identified: {role}")
 
     try:

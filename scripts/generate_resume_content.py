@@ -44,12 +44,20 @@ def read_profile_data():
                 'content': file_path.read_text(encoding="utf-8")
             })
 
+    # Step 6: Read first person voice files
+    first_person_voice = {}
+    first_person_dir = Path("profiles/anil/firstPersonVoice/")
+    if first_person_dir.exists():
+        for file_path in first_person_dir.glob("*.md"):
+            first_person_voice[file_path.stem] = file_path.read_text(encoding="utf-8")
+
     return {
         'profile_facts': profile_facts,
         'resume_skeleton': resume_skeleton,
         'career_summaries': career_summaries,
         'skills_data': skills_data,
-        'projects_data': projects_data
+        'projects_data': projects_data,
+        'first_person_voice': first_person_voice
     }
 
 def analyze_job_description(jd_content):
