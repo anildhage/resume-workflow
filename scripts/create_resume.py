@@ -29,7 +29,7 @@ def main():
     print(f"Target role identified: {role}")
 
     try:
-        # Generate content using our AI-powered generator and pipe to write_resume.py directly
+        # Generate content using our AI-powered generator
         content_gen_process = subprocess.Popen(
             [sys.executable, "scripts/generate_resume_content.py"],
             stdout=subprocess.PIPE,
@@ -43,6 +43,16 @@ def main():
             print(f"Content generation failed: {error}")
             return 1
 
+        # Clean up the content by removing status messages and keeping only actual resume content
+        lines = content.strip().split('\n')
+        content_start = 0
+        for i, line in enumerate(lines):
+            if line.startswith('Anil Dhage'):
+                content_start = i
+                break
+
+        clean_content = '\n'.join(lines[content_start:]) + '\n'
+
         print("Content generated successfully. Processing resume...")
 
         # Run write_resume.py with the generated content via stdin
@@ -54,7 +64,7 @@ def main():
             text=True
         )
 
-        output, error = write_resume_process.communicate(input=content)
+        output, error = write_resume_process.communicate(input=clean_content)
 
         if write_resume_process.returncode != 0:
             print(f"Resume generation failed: {error}")
