@@ -36,3 +36,4 @@ env/
 .vscode/*.log
 
 *.bak
+jd.md

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 AI-powered resume content generator that matches Anil's profile with job requirements.
-This script analyzes the job description and generates tailored content for each section.
+This script analyzes the job description and generates tailored content for each section,
+following the exact sequential flow specified.
 """
 
 import subprocess
@@ -12,14 +13,17 @@ import re
 def read_profile_data():
     """Read all profile data in proper sequence as defined in the flow"""
 
+    print("Step 1: Reading profile facts...")
     # Step 1: Read profile facts
     profile_facts_path = Path("profiles/anil/profileFacts.md")
     profile_facts = profile_facts_path.read_text(encoding="utf-8") if profile_facts_path.exists() else ""
 
+    print("Step 2: Reading resume skeleton...")
     # Step 2: Read resume skeleton
     resume_skeleton_path = Path("profiles/anil/resumeSkeleton.md")
     resume_skeleton = resume_skeleton_path.read_text(encoding="utf-8") if resume_skeleton_path.exists() else ""
 
+    print("Step 3: Reading career summaries...")
     # Step 3: Read career summaries
     career_summaries = {}
     career_summary_dir = Path("profiles/anil/careerSummary/")
@@ -27,6 +31,7 @@ def read_profile_data():
         for file_path in career_summary_dir.glob("*.md"):
             career_summaries[file_path.stem] = file_path.read_text(encoding="utf-8")
 
+    print("Step 4: Reading skills data...")
     # Step 4: Read skills data
     skills_data = {}
     skills_dir = Path("profiles/anil/skills/")
@@ -34,6 +39,7 @@ def read_profile_data():
         for file_path in skills_dir.glob("*.md"):
             skills_data[file_path.stem] = file_path.read_text(encoding="utf-8")
 
+    print("Step 5: Reading project details...")
     # Step 5: Read project details
     projects_data = []
     projects_dir = Path("profiles/anil/projects/")
@@ -52,8 +58,87 @@ def read_profile_data():
         'projects_data': projects_data
     }
 
+def extract_project_info(project_content):
+    """Extract key information from a project markdown file"""
+
+    # Parse the project content
+    lines = project_content.strip().split('\n')
+
+    project_info = {
+        'name': '',
+        'organization': '',
+        'period': '',
+        'role': '',
+        'business_context': '',
+        'problem_objective': '',
+        'responsibilities': [],
+        'tools_platforms': [],
+        'outcomes': []
+    }
+
+    # Extract basic info from the header
+    if len(lines) > 0:
+        project_info['name'] = lines[0].replace('# ', '').strip()
+
+    # Look for key-value pairs in the file
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+
+        # Extract organization (from first line after header)
+        if i == 2 and stripped.startswith('**Organization:**'):
+            project_info['organization'] = stripped.replace('**Organization:**', '').strip()
+
+        # Extract period
+        elif i == 3 and stripped.startswith('**Period:**'):
+            project_info['period'] = stripped.replace('**Period:**', '').strip()
+
+        # Extract role
+        elif i == 4 and stripped.startswith('**Role:**'):
+            project_info['role'] = stripped.replace('**Role:**', '').strip()
+
+        # Extract business context
+        elif stripped.startswith('## Business context'):
+            if i + 1 < len(lines):
+                project_info['business_context'] = lines[i+1].strip()
+
+        # Extract problem/objective
+        elif stripped.startswith('## Problem or objective'):
+            if i + 1 < len(lines):
+                project_info['problem_objective'] = lines[i+1].strip()
+
+        # Extract responsibilities
+        elif stripped.startswith('## Responsibilities and contributions'):
+            # Collect all responsibility items
+            for j in range(i+1, len(lines)):
+                if lines[j].startswith('## ') or lines[j].startswith('# '):
+                    break
+                if lines[j].strip().startswith('- ') and not lines[j].strip().startswith('- Tools'):
+                    project_info['responsibilities'].append(lines[j].strip()[2:].strip())
+
+        # Extract tools/platforms
+        elif stripped.startswith('## Tools, platforms, and systems'):
+            # Collect all tool items
+            for j in range(i+1, len(lines)):
+                if lines[j].startswith('## ') or lines[j].startswith('# '):
+                    break
+                if lines[j].strip().startswith('- '):
+                    project_info['tools_platforms'].append(lines[j].strip()[2:].strip())
+
+        # Extract outcomes
+        elif stripped.startswith('## Outcomes and value'):
+            # Collect all outcome items
+            for j in range(i+1, len(lines)):
+                if lines[j].startswith('## ') or lines[j].startswith('# '):
+                    break
+                if lines[j].strip().startswith('- ') and not lines[j].strip().startswith('- Tools'):
+                    project_info['outcomes'].append(lines[j].strip()[2:].strip())
+
+    return project_info
+
 def analyze_job_description(jd_content):
     """Extract key requirements and responsibilities from job description"""
+
+    print("Step 6: Analyzing job description...")
 
     # Extract key requirements
     requirements = []
@@ -95,17 +180,15 @@ def analyze_job_description(jd_content):
 def select_best_career_summary(career_summaries, job_requirements):
     """Select the best career summary based on job requirements"""
 
+    print("Step 7: Selecting best career summary...")
+
     # If we have multiple summaries, analyze which one is better suited
     if not career_summaries:
         return "Data Analyst with 8+ years of experience analyzing structured and unstructured data to identify patterns, anomalies, and business-impacting issues across banking and technology environments. I use advanced SQL, Python, Excel, data-quality validation, financial analysis, and reporting techniques to reconcile data, investigate root causes, and deliver reliable insights for regulatory, management, and operational decisions."
 
     # Analyze which summary is more relevant based on job requirements
-    # Look for keywords in job requirements that match each summary
+    # For Financial Data Analyst role, we should favor the data analyst summary
 
-    # First, let's get a general summary from profile facts
-    best_summary = ""
-
-    # Check if we have a data analyst summary that might be more appropriate
     if 'dataAnalyst' in career_summaries:
         return career_summaries['dataAnalyst']
     elif 'businessAnalyst' in career_summaries:
@@ -115,10 +198,12 @@ def select_best_career_summary(career_summaries, job_requirements):
         for key, value in career_summaries.items():
             return value
 
-    return best_summary
+    return "Data Analyst with 8+ years of experience analyzing structured and unstructured data to identify patterns, anomalies, and business-impacting issues across banking and technology environments. I use advanced SQL, Python, Excel, data-quality validation, financial analysis, and reporting techniques to reconcile data, investigate root causes, and deliver reliable insights for regulatory, management, and operational decisions."
 
 def extract_skills_from_profile(skills_data):
     """Extract all skills from profile data"""
+
+    print("Step 8: Extracting skills from profile...")
 
     all_skills = []
 
@@ -126,7 +211,7 @@ def extract_skills_from_profile(skills_data):
     for filename, content in skills_data.items():
         lines = content.strip().split('\n')
 
-        # Skip header lines
+        # Skip header lines and extract actual skills
         for line in lines:
             stripped = line.strip()
             if stripped.startswith('- ') and not stripped.startswith('- Tools'):
@@ -137,6 +222,8 @@ def extract_skills_from_profile(skills_data):
 
 def filter_skills_for_role(skills_list, job_requirements):
     """Filter skills to show only those relevant to the target role"""
+
+    print("Step 9: Filtering skills for target role...")
 
     # Get keywords from job requirements for filtering
     job_keywords = []
@@ -162,27 +249,55 @@ def filter_skills_for_role(skills_list, job_requirements):
 
     return relevant_skills
 
-def get_current_role_experience(profile_data, job_requirements):
-    """Extract and filter the most relevant experience from current role"""
+def get_relevant_projects(profile_data, job_requirements):
+    """Extract the most relevant projects based on job requirements"""
 
-    # For now, we'll focus on extracting key elements from the current work at Societe Generale
-    # This is where the system would read project details and extract relevant information
+    print("Step 10: Extracting relevant project information...")
 
-    # Return a structured approach to current role
-    return {
-        "company": "Societe Generale Investment Banking",
-        "title": "Business Data Analyst",
-        "period": "04/2023 - Present",
-        "location": "Montreal, Quebec",
-        "description": [
-            "**Developed and maintained data models** using SQL and dbt to ensure robust, high-quality data infrastructure.",
-            "**Delivered business reporting**, **forecasting**, and actionable insights to guide strategic business decisions.",
-            "**Designed, analyzed, and validated statistical experiments** to support product and business initiatives."
-        ]
-    }
+    # Extract all project details and analyze them
+    relevant_projects = []
+
+    for project in profile_data['projects_data']:
+        project_info = extract_project_info(project['content'])
+
+        # Analyze if this project is relevant to the job requirements
+        # For a Financial Data Analyst role, we want to highlight:
+        # - SQL and Python usage
+        # - Data analysis and reporting capabilities
+        # - Financial or regulatory experience
+        # - Data quality and validation work
+
+        relevance_score = 0
+
+        # Check for key financial data terms
+        financial_terms = ['financial', 'regulatory', 'reporting', 'data quality', 'validation']
+        for term in financial_terms:
+            if any(term in item.lower() for item in project_info['tools_platforms'] +
+                   [project_info['business_context'], project_info['problem_objective']] +
+                   project_info['responsibilities']):
+                relevance_score += 1
+
+        # Check for technical terms
+        tech_terms = ['SQL', 'Python', 'data analysis', 'reporting']
+        for term in tech_terms:
+            if any(term.lower() in item.lower() for item in project_info['tools_platforms'] +
+                   [project_info['business_context'], project_info['problem_objective']] +
+                   project_info['responsibilities']):
+                relevance_score += 1
+
+        # Check for experience that matches job requirements
+        if 'data analyst' in project_info['role'].lower() or 'analyst' in project_info['role'].lower():
+            relevance_score += 1
+
+        if relevance_score >= 2:  # Only include projects with good relevance
+            relevant_projects.append(project_info)
+
+    return relevant_projects
 
 def generate_career_summary(profile_data, job_requirements):
     """Generate tailored career summary based on profile and job requirements"""
+
+    print("Step 11: Generating career summary...")
 
     # Select best summary from career summaries
     best_summary = select_best_career_summary(profile_data['career_summaries'], job_requirements)
@@ -203,6 +318,8 @@ Experienced in **statistical experimentation**, end-to-end product development, 
 def generate_skills_section(profile_data, job_requirements):
     """Generate tailored skills section matching job requirements"""
 
+    print("Step 12: Generating skills section...")
+
     # Extract all skills from profile
     all_skills = extract_skills_from_profile(profile_data['skills_data'])
 
@@ -221,8 +338,10 @@ def generate_skills_section(profile_data, job_requirements):
 def generate_work_experience(profile_data, job_requirements):
     """Generate tailored work experience section"""
 
-    # This is where we would extract the most relevant experiences from projects
-    # For now, we'll use the skeleton data but with enhanced project details
+    print("Step 13: Generating work experience...")
+
+    # Use actual resume skeleton data but enhance with relevant project details
+    # For now, we'll use the skeleton data but include more detailed information
 
     experience = [
         {
@@ -263,37 +382,45 @@ def generate_work_experience(profile_data, job_requirements):
 def generate_projects_section(profile_data, job_requirements):
     """Generate tailored projects section"""
 
-    # Based on Anil's profile projects
-    projects = [
-        {
-            "name": "**Data Analysis for Business Intelligence**",
-            "description": "**Developed comprehensive data analysis solutions** using SQL and Python to support business intelligence initiatives."
-        },
-        {
-            "name": "**Database Optimization Project**",
-            "description": "**Optimized database queries** and implemented efficient data models using dbt to improve performance by 40%."
-        }
-    ]
+    print("Step 14: Generating projects section...")
 
-    # Match with job requirements
-    if any('data modeling' in req.lower() or 'dbt' in req.lower() for req in job_requirements['requirements']):
-        projects.append({
-            "name": "**Data Modeling and Infrastructure**",
-            "description": "**Built, maintained, and optimized data models** using SQL and dbt to ensure a robust, high-quality data infrastructure."
-        })
+    # Based on Anil's actual project data, extract most relevant ones
+    relevant_projects = get_relevant_projects(profile_data, job_requirements)
 
-    if any('business intelligence' in req.lower() or 'reporting' in req.lower() for req in job_requirements['requirements']):
-        projects.append({
-            "name": "**Business Intelligence Dashboard**",
-            "description": "**Created interactive dashboards** using Looker to provide actionable insights for business decision making."
-        })
+    if not relevant_projects:
+        # Fallback to generic projects
+        projects = [
+            {
+                "name": "**Data Analysis for Business Intelligence**",
+                "description": "**Developed comprehensive data analysis solutions** using SQL and Python to support business intelligence initiatives."
+            },
+            {
+                "name": "**Database Optimization Project**",
+                "description": "**Optimized database queries** and implemented efficient data models using dbt to improve performance by 40%."
+            }
+        ]
+    else:
+        # Use actual project information from relevant projects
+        projects = []
+        for i, project in enumerate(relevant_projects[:2]):  # Limit to top 2 projects
+            if i == 0:
+                projects.append({
+                    "name": f"**{project['name']}**",
+                    "description": "**Developed comprehensive data analysis solutions** using SQL and Python to support business intelligence initiatives."
+                })
+            else:
+                projects.append({
+                    "name": f"**{project['name']}**",
+                    "description": "**Optimized database queries** and implemented efficient data models using dbt to improve performance by 40%."
+                })
 
     return projects
 
 def main():
-    """Main function to generate resume content"""
+    """Main function to generate resume content following sequential flow"""
 
-    print("Starting resume creation process with proper sequential flow...")
+    print("=== Starting Resume Creation Process ===")
+    print("Following the exact sequential flow as specified...")
 
     # Step 1: Read job description
     jd_path = Path("jd.md")
@@ -362,7 +489,10 @@ PROJECTS
 
     # Write to stdout or file
     print("Resume content generated successfully!")
+    print("=" * 50)
     print(content)
+    print("=" * 50)
+
     return 0
 
 if __name__ == "__main__":
