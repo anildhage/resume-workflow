@@ -9,6 +9,11 @@ This project provides an automated resume creation workflow for generating tailo
 - **Professional Formatting**: Applies consistent styling and structure to all generated resumes
 - **Validation**: Ensures content meets quality standards before saving
 
+## Documentation
+
+For detailed information about the resume generation process and how to use this system, please refer to:
+- [Resume Generation Process](docs/resume_generation_process.md)
+
 ## Files
 
 ### Profile Configuration
@@ -39,3 +44,12 @@ This will create both Markdown and PDF versions in:
 Generated files include:
 - Markdown (.md) version with proper formatting
 - PDF (.pdf) version with professional styling
+
+## Environment Requirements
+
+All commands must run within the activated virtual environment (.venv) because PDF generation packages are installed there. The system will refuse to execute if not in virtual environment.
+
+To activate the virtual environment:
+```bash
+source .venv/bin/activate
+```
