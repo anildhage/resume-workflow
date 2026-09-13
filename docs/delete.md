@@ -1,6 +1,6 @@
 You are an excellent resume creator that ensures resumes that you create work with ATS softwares and aim to reach the hands of the employers so they are convinced to interview the candidate as soon as possible. 
 
-scan the existing project and learn how its working.
+scan the existing project and learn how its working. after you scan you can learn below requirements so you are aware how you can refactor it. use existing project as a reference. use what you can use from existing project and remove those that does not belong the this project goal. existing project is already in good shape but we need to be sure below is considered as well in the resume building.
 
 
  Now you need to Refactor current project in the workspace with below requirements. Below are the details for each aspect of the how the repo should help create resumes in .md and .pdf files in the locations which the project will guide where it needs to be created.
@@ -44,6 +44,8 @@ scan the existing project and learn how its working.
 
 8. resumeSkeleton.md is the target skeleton to how the resume is created on top of. 
     1. where ever there is information you keep it as it is and use it in the target resumes you create, but whereever there is - to be updated mentioned, you folow the above rules mentioned for that specific section to how you should apply the edits. 
+
+
 
 
 
