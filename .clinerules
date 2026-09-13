@@ -1,0 +1,32 @@
+# Cline Rules for Resume Workflow Project
+
+## Environment Requirements
+- All commands must run within the activated virtual environment (.venv)
+- The project should refuse to execute if not in virtual environment
+- Python dependencies are installed in the virtual environment only
+
+## File Structure
+- Main entry point: scripts/create_resume.py
+- Job description: jd.md
+- Profile data: profiles/anil/
+- Output directories: career/files/md/ and career/files/pdf/
+
+## Execution Rules
+1. Always activate virtual environment first: source .venv/bin/activate
+2. Run: python3 scripts/create_resume.py
+3. The workflow will:
+   - Read jd.md to understand job requirements
+   - Load profile data from profiles/anil/
+   - Generate tailored resume content
+   - Validate output quality
+   - Save Markdown and PDF files
+
+## Key Files
+- jd.md - Job description input (required)
+- profiles/anil/ - Source profile data directory
+- scripts/create_resume.py - Main orchestration script
+- CLAUDE.md - Documentation for Claude Code
+
+## Required Commands
+- source .venv/bin/activate
+- python3 scripts/create_resume.py

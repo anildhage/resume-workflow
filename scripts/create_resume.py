@@ -6,10 +6,24 @@ This script analyzes the job description and generates a tailored resume for the
 
 import subprocess
 import sys
+import os
 from pathlib import Path
+
+def check_virtual_environment():
+    """Check if running in virtual environment"""
+    # Check if we're in a virtual environment by looking for venv-related indicators
+    if not hasattr(sys, 'real_prefix') and not (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+        print("Error: This script must be run within the activated virtual environment (.venv)")
+        print("Please activate the virtual environment first: source .venv/bin/activate")
+        return False
+    return True
 
 def main():
     """Main orchestration function"""
+    
+    # Check if we're in virtual environment
+    if not check_virtual_environment():
+        return 1
     
     print("Starting resume creation process for Anil...")
     print("Analyzing job description and generating tailored resume...")
