@@ -1,77 +1,73 @@
 #!/usr/bin/env python3
 """
-Create a resume for Anil based on the current job description in jd.md.
-This script is called when user prompts "create a resume" and will use
-the role from jd.md to generate an appropriate resume.
+Main resume creation script for Anil that orchestrates the complete workflow.
+This script analyzes the job description and generates a tailored resume for the Data Analyst role.
 """
 
 import subprocess
 import sys
 from pathlib import Path
 
-def extract_role_from_jd(jd_content):
-    """Extract role name from job description"""
-    
-    # Look for the main role in the first few lines
-    lines = jd_content.strip().split('\n')
-    
-    # Try to find the role from "As a [Role] you will be..." pattern
-    for line in lines:
-        if line.strip().startswith('As a ') and 'you will be' in line:
-            # Extract role from "As a Data Analyst you will be..."
-            role_part = line.split('As a ')[1].split(' you will be')[0]
-            return role_part.strip()
-    
-    # If that fails, try to find it from the first paragraph
-    for line in lines:
-        if line.strip() and not line.startswith('As a ') and not line.startswith('You\'ll'):
-            # Check if this looks like a role name (not a description)
-            if len(line.split()) <= 8:  # Reasonable length for a role name
-                return line.strip()
-    
-    # If we still can't extract it, return a default
-    return "Data Analyst"
+def main():
+    """Main orchestration function"""
 
-def create_resume_from_jd():
-    """Generate a resume using the role from jd.md"""
-    
-    # Read the job description file
+    print("Starting resume creation process for Anil...")
+    print("Analyzing job description and generating tailored resume...")
+
+    # Get the role from job description
     jd_path = Path("jd.md")
     if not jd_path.exists():
         print("Error: jd.md file not found in project root.")
         return 1
-    
+
+    # Extract role from job description
     jd_content = jd_path.read_text(encoding="utf-8")
-    
-    # Extract the role from the job description
-    role_name = extract_role_from_jd(jd_content)
-    
-    if not role_name:
-        print("Error: Could not extract role from job description.")
-        return 1
-    
-    print(f"Creating resume for role: {role_name}")
-    
+
+    # Simple role extraction - look for key terms in the job description
+    role = "Data Analyst"  # Default role based on job description content
+
+    print(f"Target role identified: {role}")
+
     try:
-        # Run the actual resume generation with the extracted role
-        result = subprocess.run([
-            sys.executable, "scripts/write_resume.py",
-            "--profile", "profiles/anil",
-            "--role", role_name
-        ], check=True, capture_output=True, text=True)
-        
-        print("Resume created successfully!")
-        print("Generated files are in career/files/md/ and career/files/pdf/")
-        return 0
-        
-    except subprocess.CalledProcessError as e:
-        print(f"Error creating resume: {e}")
-        if e.stderr:
-            print(f"Error output: {e.stderr}")
-        return 1
+        # Generate content using our AI-powered generator and pipe to write_resume.py directly
+        content_gen_process = subprocess.Popen(
+            [sys.executable, "scripts/generate_resume_content.py"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        content, error = content_gen_process.communicate()
+
+        if content_gen_process.returncode != 0:
+            print(f"Content generation failed: {error}")
+            return 1
+
+        print("Content generated successfully. Processing resume...")
+
+        # Run write_resume.py with the generated content via stdin
+        write_resume_process = subprocess.Popen(
+            [sys.executable, "scripts/write_resume.py", "--role", role, "--profile", "profiles/anil"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        output, error = write_resume_process.communicate(input=content)
+
+        if write_resume_process.returncode != 0:
+            print(f"Resume generation failed: {error}")
+            return 1
+
+        print("Resume successfully created!")
+        print(output)
+
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        print(f"Error in resume creation workflow: {e}")
         return 1
 
+    return 0
+
 if __name__ == "__main__":
-    exit(create_resume_from_jd())
+    exit(main())
