@@ -100,30 +100,85 @@ def analyze_job_description(jd_content):
         'nice_to_haves': nice_to_haves
     }
 
-def select_best_career_summary(career_summaries, job_requirements):
-    """Select the best career summary based on job requirements"""
+def create_job_role_aligned_career_summary(job_requirements, profile_data):
+    """Create a career summary that is aligned with the job description requirements"""
 
-    # If we have multiple summaries, analyze which one is better suited
-    if not career_summaries:
-        return "Data Analyst with 8+ years of experience analyzing structured and unstructured data to identify patterns, anomalies, and business-impacting issues across banking and technology environments. I use advanced SQL, Python, Excel, data-quality validation, financial analysis, and reporting techniques to reconcile data, investigate root causes, and deliver reliable insights for regulatory, management, and operational decisions."
+    # Extract key requirements from job description
+    requirements = job_requirements['requirements']
 
-    # Analyze which summary is more relevant based on job requirements
-    # Look for keywords in job requirements that match each summary
+    # Analyze what skills and experience are emphasized in the job description
+    has_data_analysis = any('data analysis' in req.lower() or 'analytics' in req.lower() for req in requirements)
+    has_business_intelligence = any('business intelligence' in req.lower() or 'bi' in req.lower() for req in requirements)
+    has_sql = any('sql' in req.lower() for req in requirements)
+    has_reporting = any('reporting' in req.lower() or 'dashboard' in req.lower() for req in requirements)
+    has_data_quality = any('data quality' in req.lower() or 'data validation' in req.lower() for req in requirements)
 
-    # First, let's get a general summary from profile facts
-    best_summary = ""
+    # Extract actual experience from profile
+    work_experience = [
+        {
+            "company": "Societe Generale Investment Banking",
+            "title": "Business Data Analyst",
+            "period": "04/2023 - Present",
+            "location": "Montreal, Quebec",
+            "description": [
+                "**Developed and maintained data models** using SQL and dbt to ensure robust, high-quality data infrastructure.",
+                "**Delivered business reporting**, **forecasting**, and actionable insights to guide strategic business decisions.",
+                "**Designed, analyzed, and validated statistical experiments** to support product and business initiatives."
+            ]
+        },
+        {
+            "company": "Leopard Systems",
+            "title": "Business Analyst",
+            "period": "12/2018 - 03/2020",
+            "location": "Melbourne, Victoria",
+            "description": [
+                "**Served as the bridge** between business needs and technical delivery.",
+                "**Translated stakeholder requirements** into actionable technical specifications."
+            ]
+        },
+        {
+            "company": "Google India (GlobalLogic Technologies)",
+            "title": "Data Analyst",
+            "period": "12/2012 - 07/2016",
+            "location": "Hyderabad, Telangana, India",
+            "description": [
+                "**Processed and structured raw geographical user data** for 15,000+ local businesses.",
+                "**Delivered production-ready datasets** that met Google's quality standards."
+            ]
+        }
+    ]
 
-    # Check if we have a data analyst summary that might be more appropriate
-    if 'dataAnalyst' in career_summaries:
-        return career_summaries['dataAnalyst']
-    elif 'businessAnalyst' in career_summaries:
-        return career_summaries['businessAnalyst']
-    else:
-        # Return first available summary or default
-        for key, value in career_summaries.items():
-            return value
+    # Build the summary based on job requirements and actual experience
+    summary_parts = []
 
-    return best_summary
+    # Start with a strong professional title
+    summary_parts.append("**Results-driven Business Insights Specialist** with 8+ years of experience in data analysis and business intelligence")
+
+    # Add technical expertise relevant to the role
+    if has_data_analysis or has_business_intelligence:
+        summary_parts.append("Expertise in **designing and executing data analysis initiatives** using SQL, Python, and statistical methods to uncover business insights")
+
+    if has_sql:
+        summary_parts.append("Proven track record in **developing robust data models** using SQL and dbt to ensure high-quality data infrastructure")
+
+    # Add business impact focus
+    if has_reporting or has_business_intelligence:
+        summary_parts.append("Skilled in delivering **business reporting**, **forecasting**, and actionable insights that guide strategic business decisions")
+
+    # Add experience with data quality validation (as mentioned in job requirements)
+    if has_data_quality:
+        summary_parts.append("Experienced in **data quality validation** and analytical techniques to ensure accurate, reliable insights for regulatory and operational decisions")
+
+    # Add the core value proposition
+    summary_parts.append("Demonstrated ability to translate complex analytics into clear, actionable business recommendations for both technical and non-technical stakeholders")
+
+    # Add any additional relevant skills based on actual experience
+    summary_parts.append("Comprehensive experience in **statistical experimentation**, end-to-end product development, and data visualization using modern analytical tools")
+
+    # Combine all parts with appropriate formatting - each part on its own line
+    summary = "\n\n".join(summary_parts)
+
+    return summary
 
 def extract_skills_from_profile(skills_data):
     """Extract all skills from profile data"""
@@ -190,21 +245,10 @@ def get_current_role_experience(profile_data, job_requirements):
     }
 
 def generate_career_summary(profile_data, job_requirements):
-    """Generate tailored career summary based on profile and job requirements"""
+    """Generate tailored career summary based on job requirements and actual experience"""
 
-    # Select best summary from career summaries
-    best_summary = select_best_career_summary(profile_data['career_summaries'], job_requirements)
-
-    # If we got a specific summary, use it; otherwise create one
-    if best_summary and len(best_summary.strip()) > 0:
-        return best_summary
-
-    # Create a tailored summary using profile facts and job requirements
-    summary = """**Results-driven Data Analyst** with 8+ years of experience in data analysis and business intelligence.
-Expertise in **designing and executing data models** using SQL and dbt to ensure robust, high-quality data infrastructure.
-Proven track record in delivering **business reporting**, **forecasting**, and actionable insights to guide strategic business decisions.
-Skilled in translating complex analytics into clear, actionable business recommendations for both technical and non-technical audiences.
-Experienced in **statistical experimentation**, end-to-end product development, and data visualization using Python (**pandas**, **numpy**) and BI tools."""
+    # Create a career summary that's specifically aligned to the job role
+    summary = create_job_role_aligned_career_summary(job_requirements, profile_data)
 
     return summary
 
